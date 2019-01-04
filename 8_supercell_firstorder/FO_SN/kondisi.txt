@@ -1,0 +1,4 @@
+first_order :
+
+deleted atom : 57 
+first_order : 46, 28, 56, 2

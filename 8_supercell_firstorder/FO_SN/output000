@@ -1,0 +1,2325 @@
+ *******************************************************************************
+ *   PPPPPPP    HH     HH      AA        SSSSS    EEEEEEEE                     *
+ *   PPPPPPPP   HH     HH     AAAA      SSSSSSS   EEEEEEEE        /            *
+ *   PP     PP  HH     HH     AAAA      SS   SS   EE             //   0000     *
+ *   PP     PP  HH     HH    AA  AA    SS         EE            //  000  000   *
+ *   PP     PP  HH     HH    AA  AA    SSS        EE            /   00    00   *
+ *   PPPPPPPP   HHHHHHHHH    AA  AA     SSSSS     EEEEEEEE     //   00    00   *
+ *   PPPPPPP    HHHHHHHHH   AA    AA      SSSS    EEEEEEEE     /    00    00   *
+ *   PP         HH     HH   AA    AA        SSS   EE           /    00    00   *
+ *   PP         HH     HH   AAAAAAAA         SS   EE          /     00    00   *
+ *   PP         HH     HH  AAAAAAAAAA  SS   SSS   EE         //     00    00   *
+ *   PP         HH     HH  AA      AA  SSSSSSS    EEEEEEEE   /       000000    *
+ *   PP         HH     HH  AA      AA   SSSSS     EEEEEEEE  //        0000     *
+ *******************************************************************************
+program start     19:47:03  28/05/2018                                          
+ npes =     64 << m_Parallel_get_nproc_from_arg>>
+ nrank_e =  64
+ nrank_k =   1
+ phase/0 2014.03.01 Revision:  409 -- ORG_Parallel --                    
+ @(#)system=linux                                                        
+ phaseUnif                                                               
+ --- << CPP options defined in the makefile >> --
+ Parallization: MPI
+ MGS  = TRANSPOSE
+ FFT WF  = FFTW3
+ FFT CD  = FFTW3
+ NO_MGS_DGEMM is not defined
+ NO_NONLOCAL_DGEMM is not defined
+ NO_NONLOCAL_RMM_DGEMM is not defined
+ NO_SUBMAT_DGEMM is not defined
+ NO_FORCE_DGEMM is not defined
+ NO_MATDIAGON_DGEMM is not defined
+ LMM_PREVIOUS is not defined
+ ----------------------------------------------
+ FFILENAMES = ./file_names.data , newly opened  
+ !! mpifiletypes is not read
+ F_POT(1) = ../../../ppAll/Sn_ggapbe_us_01.pp                           
+ !! npartitioned_files =     0
+ file_existance_nfcntn     =   F file_existance_contfiles =   F
+ file_existance_nfcntn_bin =   F file_existance_contfiles =   F
+ file_existance_nfzaj      =   F file_existance_contfiles =   F
+ file_existance_nfchgt     =   F file_existance_contfiles =   F
+ --- existance check of continue files ---
+ F_CNTN     (= ./continue.data ) not existing
+ F_CNTN_BIN (= ./continue_bin.data ) not existing
+ F_ZAJ      (= ./nfzaj.data ) not existing
+ F_CHGT     (= ./nfchgt.data ) not existing
+ contfiles  (= continue files ) not existing
+ 3contfiles (= 3continue files ) not existing
+ -----------------------------------------
+ F_INP      = ./nfinp.data , newly opened  
+ F_DYNM     = ./nfdynm.data , newly opened  
+ F_ENF      = ./nfefn.data , newly opened  
+ !*--- input-file style = NEW
+ !!  F_INP = ./nfinp.data                    
+
+ !** contents of the input parameter file : ./nfinp.data
+5Control{
+    cpumax = 23 hour
+    condition = -1
+    max_iteration = 1000000
+}
+accuracy{
+    cutoff_wf = 25.00 rydberg
+    cutoff_cd = 225.00 rydberg
+    ksampling{
+        method = monk
+        mesh{
+            nx = 2
+            ny = 2
+            nz = 2
+        }
+    }
+    xctype = ggapbe
+    force_convergence{
+        max_force = 0.1e-3
+    }
+    matrix_diagon{
+        cutoff_wf = 30.00 rydberg
+    }
+    initial_charge_density = Gauss
+    num_bands = 192
+}
+structure{
+    unit_cell{
+        a_vector = 25.2786732532 0.00 0.00
+        b_vector = 0.00 25.2786732532 0.00
+        c_vector = 0.00 0.00 25.2786732532
+    }
+    atom_list{
+        coordinate_system = internal
+        atoms{
+            #default weight = 1, mobile = 1
+            #tag element rx ry rz mobile weight
+            Sn  0.0625  0.0625  0.0625  0   1
+            Sn  0.4375  0.4375  0.4375  1   1
+            Sn  0.0625  0.3125  0.3125  0   1
+            Sn  0.4375  0.1875  0.1875  0   1
+            Sn  0.3125  0.0625  0.3125  0   1
+            Sn  0.1875  0.4375  0.1875  0   1
+            Sn  0.3125  0.3125  0.0625  0   1
+            Sn  0.1875  0.1875  0.4375  0   1
+            Sn  0.0625  0.0625  0.5625  0   1
+            Sn  0.4375  0.4375  0.9375  0   1
+            Sn  0.0625  0.3125  0.8125  0   1
+            Sn  0.4375  0.1875  0.6875  0   1
+            Sn  0.3125  0.0625  0.8125  0   1
+            Sn  0.1875  0.4375  0.6875  0   1
+            Sn  0.3125  0.3125  0.5625  0   1
+            Sn  0.1875  0.1875  0.9375  0   1
+            Sn  0.0625  0.5625  0.0625  0   1
+            Sn  0.4375  0.9375  0.4375  0   1
+            Sn  0.0625  0.8125  0.3125  0   1
+            Sn  0.4375  0.6875  0.1875  0   1
+            Sn  0.3125  0.5625  0.3125  0   1
+            Sn  0.1875  0.9375  0.1875  0   1
+            Sn  0.3125  0.8125  0.0625  0   1
+            Sn  0.1875  0.6875  0.4375  0   1
+            Sn  0.0625  0.5625  0.5625  0   1
+            Sn  0.4375  0.9375  0.9375  0   1
+            Sn  0.0625  0.8125  0.8125  0   1
+            Sn  0.4375  0.6875  0.6875  1   1
+            Sn  0.3125  0.5625  0.8125  0   1
+            Sn  0.1875  0.9375  0.6875  0   1
+            Sn  0.3125  0.8125  0.5625  0   1
+            Sn  0.1875  0.6875  0.9375  0   1
+            Sn  0.5625  0.0625  0.0625  0   1
+            Sn  0.9375  0.4375  0.4375  0   1
+            Sn  0.5625  0.3125  0.3125  0   1
+            Sn  0.9375  0.1875  0.1875  0   1
+            Sn  0.8125  0.0625  0.3125  0   1
+            Sn  0.6875  0.4375  0.1875  0   1
+            Sn  0.8125  0.3125  0.0625  0   1
+            Sn  0.6875  0.1875  0.4375  0   1
+            Sn  0.5625  0.0625  0.5625  0   1
+            Sn  0.9375  0.4375  0.9375  0   1
+            Sn  0.5625  0.3125  0.8125  0   1
+            Sn  0.9375  0.1875  0.6875  0   1
+            Sn  0.8125  0.0625  0.8125  0   1
+            Sn  0.6875  0.4375  0.6875  1   1
+            Sn  0.8125  0.3125  0.5625  0   1
+            Sn  0.6875  0.1875  0.9375  0   1
+            Sn  0.5625  0.5625  0.0625  0   1
+            Sn  0.9375  0.9375  0.4375  0   1
+            Sn  0.5625  0.8125  0.3125  0   1
+            Sn  0.9375  0.6875  0.1875  0   1
+            Sn  0.8125  0.5625  0.3125  0   1
+            Sn  0.6875  0.9375  0.1875  0   1
+            Sn  0.8125  0.8125  0.0625  0   1
+            Sn  0.6875  0.6875  0.4375  1   1
+            Sn  0.9375  0.9375  0.9375  0   1
+            Sn  0.5625  0.8125  0.8125  0   1
+            Sn  0.9375  0.6875  0.6875  0   1
+            Sn  0.8125  0.5625  0.8125  0   1
+            Sn  0.6875  0.9375  0.6875  0   1
+            Sn  0.8125  0.8125  0.5625  0   1
+            Sn  0.6875  0.6875  0.9375  0   1
+
+        }
+    }
+    element_list{
+        #tag element atomicnumber mass zeta deviation
+         Sn 50 * * *
+    }
+    symmetry{
+        tspace{
+            lattice_system = primitive
+        }
+    }
+    unit_cell_type = bravais
+}
+structural_evolution{
+    method = gdiis
+    dt = 50
+    gdiis{
+        initial_method = cg
+        c_forc2gdiis = 0.001 hartree/bohr
+    }
+}
+Postprocessing{
+    dos{
+        sw_dos = on
+        method = tetrahedral
+        variance = 1.d-6
+        nwd_dos_window_width = 10
+        deltaE_dos = 1.d-4
+    }
+    charge{
+        sw_charge_rspace = ON
+        filetype = cube
+        title = "This is a title line for the graphite"
+    }
+}
+ !**
+ !** driver = general
+ !* tag_control is not found
+ !* default values are applied
+ !** cpumax =            86400.00000000 (sec)
+ !** max_iteration =      10000
+ !** nfstopcheck =          1
+ !** multiple_replica_mode =          0
+ !** sw_ekzaj =          0
+ !** condition is changed: icond =        0
+ !** gmax =   5.0000
+ !** gmaxp =  15.0000
+ !** fftsize_factor_gmaxp =   1.0000
+ !** gmaxp_reduced        =  15.0000
+ !** initial_chg = 
+ !** --- parameters for force_convergence --
+ !** forccr (=max_force) =       0.10000000D-03
+ !** force_error_check_mode = OFF
+ !** max_force_edelta_i =       0.10000000D+01
+ !## evaluating energy before charge construction is            0
+ !** nonlocal potential in real space :   0
+ !** imag =      0
+ !** imag, nspin, af =      0     1     0 <<m_CtrlP_set_nspin_and_af>>
+ !** ndim_spinor =            1
+ !** inversion_symmetry =      0
+ !** symmetry_check_criterion =       0.10000000D-11
+ !** symmetry_method =     -2
+ !** sw_supercell_symmetry =      1
+ !*  tag_tspace is found
+ !** il =     1 <<m_CS_rd_n.set_lattice_system>>
+ !** il =                        primitive
+ !** ngen =     1 <<m_CS_rd_n>>
+ !** ngen_tl =     0 <<m_CS_rd_n>>
+ !** il = 1   P
+ !** unit_cell_type =      0 [bravais] <<m_CS_rd_n>>
+ !** a,b,c,ca,cb,cc =    25.278673   25.278673   25.278673    0.000000    0.000000    0.000000 <<m_CS_rd_n>>
+ !** avec =    25.278673    0.000000    0.000000
+ !** bvec =     0.000000   25.278673    0.000000
+ !** cvec =     0.000000    0.000000   25.278673
+ !** ucinptype =      1
+ !** primitive unit cell vectors are given as
+ !** avec =    25.278673    0.000000    0.000000
+ !** bvec =     0.000000   25.278673    0.000000
+ !** cvec =     0.000000    0.000000   25.278673
+ !** univol =   16153.358399829116 <<m_CS_rd_n>>
+ !** REMARK: sw_divide_subspace is set to OFF 
+ !** applied wavefunction solver set : davidson -> rmm3
+ !** --- id, sol, till_n,  dts, dte, itr, var, prec, cmix, submat ---
+ !**      - for_init_str -
+ !**   1  56     1  0.200  0.200 100  0  1  1  1
+ !**   2   5    -1  0.200  0.200 100  0  1  1  1
+ !**      - during_str_relax -
+ !**   3  56     1  0.200  0.200 100  0  1  1  1
+ !**   4   5    -1  0.200  0.200 100  0  1  1  1
+ !** n_Charge_Mixing_way =     1
+ !** applied charge-mixing method : pulay
+ !** sw_recomposing =     1
+ !** spin_density_mixfactor =   1.0000
+ !** --- id, method, rmxs, rmxe, itr, var, prec, istr, nbxmix, update ---
+ !**        1     5  0.400  0.400  100    0    1    3   15    2
+ !** -- sw_band_symmetry_analysis  0
+ !** tag_method is found
+ !** sw_dos              =      1
+ !** dos_method          =      1 (Gauss_distrib_func= 1,TETRAHEDRON= 2)
+ !** deltaE_dos          =   0.1000D-03
+ !** variance_dos_GaussD =   0.1000D-05
+ !** nwd_dos_window_width =       10
+ !** dos_subroutine      =     5
+ *** calc_dos_magmom_contrib is set to default,             1
+ !** sw_charge_rspace   =      1
+ !** charge_filetype    =      1
+ !** charge_title    = This is a title line for the graphite                                           
+ !** sw_spin_magmom_rspace =            0
+ !** sw_phonon =            0
+ !** number of atoms =    63
+ !** natm2, natm =     63    63
+ !** natm2, natm =     63    63 <<set_atompos_and_etc>>
+ !** -- tag_constraint is not found --
+ !** -- << set_element_detail >> --
+ !** iatomn(     1) =  50.0000
+ !** ityp =      1 : iatomn,amion,zeta1,alfa,qex,type =  50.0000  51196.4213  0.0000  0.1500  0.0000   Sn  
+ ! ------------ Initial ionic charge --- 
+      id     name    ionic_chrge
+       1      Sn      0.000000
+ ! ---------------------------------------------
+ ! ------------ Initial Magnetic Moment --- 
+      id     name        moment 
+       1      Sn      0.000000
+ ! ---------------------------------------------
+ !** === Atomic coordinates ==
+ !**   id  ( coordinates_in_Intrnal_sys  ) (  coordinates_in_Cartsian_system  ) weight    ityp
+ !**       (   rx         ry         rz  ) (    rx          ry          rz    )      imdtyp    species
+ !**     1   0.062500   0.062500   0.062500      1.5799      1.5799      1.5799  1     0  1   Sn  
+ !**     2   0.437500   0.437500   0.437500     11.0594     11.0594     11.0594  1     1  1   Sn  
+ !**     3   0.062500   0.312500   0.312500      1.5799      7.8996      7.8996  1     0  1   Sn  
+ !**     4   0.437500   0.187500   0.187500     11.0594      4.7398      4.7398  1     0  1   Sn  
+ !**     5   0.312500   0.062500   0.312500      7.8996      1.5799      7.8996  1     0  1   Sn  
+ !**     6   0.187500   0.437500   0.187500      4.7398     11.0594      4.7398  1     0  1   Sn  
+ !**     7   0.312500   0.312500   0.062500      7.8996      7.8996      1.5799  1     0  1   Sn  
+ !**     8   0.187500   0.187500   0.437500      4.7398      4.7398     11.0594  1     0  1   Sn  
+ !**     9   0.062500   0.062500   0.562500      1.5799      1.5799     14.2193  1     0  1   Sn  
+ !**    10   0.437500   0.437500   0.937500     11.0594     11.0594     23.6988  1     0  1   Sn  
+ !**    11   0.062500   0.312500   0.812500      1.5799      7.8996     20.5389  1     0  1   Sn  
+ !**    12   0.437500   0.187500   0.687500     11.0594      4.7398     17.3791  1     0  1   Sn  
+ !**    13   0.312500   0.062500   0.812500      7.8996      1.5799     20.5389  1     0  1   Sn  
+ !**    14   0.187500   0.437500   0.687500      4.7398     11.0594     17.3791  1     0  1   Sn  
+ !**    15   0.312500   0.312500   0.562500      7.8996      7.8996     14.2193  1     0  1   Sn  
+ !**    16   0.187500   0.187500   0.937500      4.7398      4.7398     23.6988  1     0  1   Sn  
+ !**    17   0.062500   0.562500   0.062500      1.5799     14.2193      1.5799  1     0  1   Sn  
+ !**    18   0.437500   0.937500   0.437500     11.0594     23.6988     11.0594  1     0  1   Sn  
+ !**    19   0.062500   0.812500   0.312500      1.5799     20.5389      7.8996  1     0  1   Sn  
+ !**    20   0.437500   0.687500   0.187500     11.0594     17.3791      4.7398  1     0  1   Sn  
+ !**    21   0.312500   0.562500   0.312500      7.8996     14.2193      7.8996  1     0  1   Sn  
+ !**    22   0.187500   0.937500   0.187500      4.7398     23.6988      4.7398  1     0  1   Sn  
+ !**    23   0.312500   0.812500   0.062500      7.8996     20.5389      1.5799  1     0  1   Sn  
+ !**    24   0.187500   0.687500   0.437500      4.7398     17.3791     11.0594  1     0  1   Sn  
+ !**    25   0.062500   0.562500   0.562500      1.5799     14.2193     14.2193  1     0  1   Sn  
+ !**    26   0.437500   0.937500   0.937500     11.0594     23.6988     23.6988  1     0  1   Sn  
+ !**    27   0.062500   0.812500   0.812500      1.5799     20.5389     20.5389  1     0  1   Sn  
+ !**    28   0.437500   0.687500   0.687500     11.0594     17.3791     17.3791  1     1  1   Sn  
+ !**    29   0.312500   0.562500   0.812500      7.8996     14.2193     20.5389  1     0  1   Sn  
+ !**    30   0.187500   0.937500   0.687500      4.7398     23.6988     17.3791  1     0  1   Sn  
+ !**    31   0.312500   0.812500   0.562500      7.8996     20.5389     14.2193  1     0  1   Sn  
+ !**    32   0.187500   0.687500   0.937500      4.7398     17.3791     23.6988  1     0  1   Sn  
+ !**    33   0.562500   0.062500   0.062500     14.2193      1.5799      1.5799  1     0  1   Sn  
+ !**    34   0.937500   0.437500   0.437500     23.6988     11.0594     11.0594  1     0  1   Sn  
+ !**    35   0.562500   0.312500   0.312500     14.2193      7.8996      7.8996  1     0  1   Sn  
+ !**    36   0.937500   0.187500   0.187500     23.6988      4.7398      4.7398  1     0  1   Sn  
+ !**    37   0.812500   0.062500   0.312500     20.5389      1.5799      7.8996  1     0  1   Sn  
+ !**    38   0.687500   0.437500   0.187500     17.3791     11.0594      4.7398  1     0  1   Sn  
+ !**    39   0.812500   0.312500   0.062500     20.5389      7.8996      1.5799  1     0  1   Sn  
+ !**    40   0.687500   0.187500   0.437500     17.3791      4.7398     11.0594  1     0  1   Sn  
+ !**    41   0.562500   0.062500   0.562500     14.2193      1.5799     14.2193  1     0  1   Sn  
+ !**    42   0.937500   0.437500   0.937500     23.6988     11.0594     23.6988  1     0  1   Sn  
+ !**    43   0.562500   0.312500   0.812500     14.2193      7.8996     20.5389  1     0  1   Sn  
+ !**    44   0.937500   0.187500   0.687500     23.6988      4.7398     17.3791  1     0  1   Sn  
+ !**    45   0.812500   0.062500   0.812500     20.5389      1.5799     20.5389  1     0  1   Sn  
+ !**    46   0.687500   0.437500   0.687500     17.3791     11.0594     17.3791  1     1  1   Sn  
+ !**    47   0.812500   0.312500   0.562500     20.5389      7.8996     14.2193  1     0  1   Sn  
+ !**    48   0.687500   0.187500   0.937500     17.3791      4.7398     23.6988  1     0  1   Sn  
+ !**    49   0.562500   0.562500   0.062500     14.2193     14.2193      1.5799  1     0  1   Sn  
+ !**    50   0.937500   0.937500   0.437500     23.6988     23.6988     11.0594  1     0  1   Sn  
+ !**    51   0.562500   0.812500   0.312500     14.2193     20.5389      7.8996  1     0  1   Sn  
+ !**    52   0.937500   0.687500   0.187500     23.6988     17.3791      4.7398  1     0  1   Sn  
+ !**    53   0.812500   0.562500   0.312500     20.5389     14.2193      7.8996  1     0  1   Sn  
+ !**    54   0.687500   0.937500   0.187500     17.3791     23.6988      4.7398  1     0  1   Sn  
+ !**    55   0.812500   0.812500   0.062500     20.5389     20.5389      1.5799  1     0  1   Sn  
+ !**    56   0.687500   0.687500   0.437500     17.3791     17.3791     11.0594  1     1  1   Sn  
+ !**    57   0.937500   0.937500   0.937500     23.6988     23.6988     23.6988  1     0  1   Sn  
+ !**    58   0.562500   0.812500   0.812500     14.2193     20.5389     20.5389  1     0  1   Sn  
+ !**    59   0.937500   0.687500   0.687500     23.6988     17.3791     17.3791  1     0  1   Sn  
+ !**    60   0.812500   0.562500   0.812500     20.5389     14.2193     20.5389  1     0  1   Sn  
+ !**    61   0.687500   0.937500   0.687500     17.3791     23.6988     17.3791  1     0  1   Sn  
+ !**    62   0.812500   0.812500   0.562500     20.5389     20.5389     14.2193  1     0  1   Sn  
+ !**    63   0.687500   0.687500   0.937500     17.3791     17.3791     23.6988  1     0  1   Sn  
+ !** i =     1 element_name = Sn  
+ !** addition frequency :       -1
+ !**   ia1 - ia2, ityp, ionic_mass 
+ !**    1 -   63   1         51196.42125
+  !** sw_mix_charge_ekindens is turned off
+ !** base_reduction_for_GAMMA =   1 (=default value) <<m_Kp_rd_n>>
+ !** base_symmetrization_for_GAMMA =   1 (=default value) <<m_Kp_rd_n>>
+<< Monkhorst-Pack scheme
+ MP index:   2   2   2
+ kp shift:    0.50000    0.50000    0.50000
+ il =   1
+ use_trs =   1
+   Monkhorst-Pack scheme >>
+
+ <***   PAW one center integral   ***>
+ 1-th element : Sn : sphericalharmonicsexpansion : dnr =  1
+ --- check of file_names ---
+ F_INP      = ./nfinp.data
+ F_POT(1)   = ../../../ppAll/Sn_ggapbe_us_01.pp
+ F_POT(2)   = ./pot.02
+ F_POT(3)   = ./pot.03
+ F_KPOINT   = ./kpoint.data
+ F_CHGT     = ./nfchgt.data
+ F_CNTN     = ./continue.data
+ F_CNTN_BIN = ./continue_bin.data
+ F_ZAJ      = ./nfzaj.data
+ F_STOP     = ./nfstop.data
+ F_NEB_OUT   = ./output_neb                                                
+ F_IMAGE(0)  = ./endpoint0.data                                            
+ F_IMAGE(-1) = ./endpoint1.data                                            
+ F_CNTN_BIN = ./continue_bin_paw.data
+ ngen =      1
+ igen =      1 jgen =     0    1    0    1    0    1
+  << rltv, altv >>
+  0.2486  0.0000  0.0000            25.2787  0.0000  0.0000
+  0.0000  0.2486  0.0000             0.0000 25.2787  0.0000
+  0.0000  0.0000  0.2486             0.0000  0.0000 25.2787
+ -- m_CS_alloc_op_tau --
+ !! nopr, af =     1    0
+ -- m_CS_alloc_op_tau_tl --
+ !! ngen_tl =     0
+ ngen_tl =      0
+  --- SC Symmetry Operations (CARTS, PUCV) --- (in m_CS_gnrt_symm_operators_tl)
+ !! ngen_tl =      0
+=== Lattice parameters ===
+a    ,b   ,c     =     25.27867325    25.27867325    25.27867325 Bohr
+alpha,beta,gamma =     90.00000000    90.00000000    90.00000000 degree
+             Bravais lattice: aP
+Crystallographic point group: C1  1    
+                 Space group: P1        
+ -- allocation of napt --
+ !! natm =    63 nopr+af =     1
+  --- Symmetry Operations (CARTS, PUCV) --- (in m_CS_wd_op_and_tau)
+ !! nopr+af =      1
+  #symmetry op. =            1 e    
+  1.0000  0.0000  0.0000  0.0000     1.0000  0.0000  0.0000  0.0000
+  0.0000  1.0000  0.0000  0.0000     0.0000  1.0000  0.0000  0.0000
+  0.0000  0.0000  1.0000  0.0000     0.0000  0.0000  1.0000  0.0000
+  -- OK symmetry check of atomic coordinates
+ kimg =     2 (m_CtrlP_set_kimg)
+  ! Size of rhombohedrons which contain spheres of G_vectors being smaller than gmax and gmaxp
+  KNX ,KNY ,KNZ  =     41    41    41
+  KNXP,KNYP,KNZP =     61    61    61
+  knxp_reduced, knyp_reduced, knzp_reduced =     61    61    61
+  --- fft_box_size <<m_FFT_set_box_sizes>> ---
+  WF    90   90   90
+  CD   128  128  128
+ !pwBS kg0, kg, kgp =      34049    272633    920745
+ !pwBS kgp_reduced  =     920745
+ !pwBS   kg0 = (#G(<=Gmax)), kg = (#G(<=2Gmax)), kgp = (#G(<=Gmaxp))
+  !kg  =       272633
+  !kgp =       920745
+  !kgp_reduced =       920745
+ !pwbs  ngshell =      214
+  n_rGpv =           61          61          61
+  mmdim  =          122         122         122
+ !pwBS: g_list size =       122      122      122
+ !pwBS: (ngpt_l)s are all decided by using g_list
+  ---- (WF)FFT size ----
+     (nfft, fft_box_size_WF)
+ FFT total elements(including work area) =    1458000
+ FFT box adjustable dimension            =    90   90   90
+ FFT box real dimension                  =    90   90   90
+  ---- (CD)FFT size ----
+     (nfftps, fft_box_size_CD)
+ FFT total elements(including work area) =    4194304
+ FFT box adjustable dimension            =   128  128  128
+ FFT box real dimension                  =   128  128  128
+  ---- (CD_c)FFT size ----
+     (nfftp, fft_box_size_CD_c)
+ FFT total elements(including work area) =    4194304
+ FFT box adjustable dimension            =   128  128  128
+ !(init_fft_coef_WF) nl, nm, nn   =       90      90      90
+ !(init_fft_coef_WF) plan_WF(1:2) =             65246496            65240256
+ !(CDFFT_setup) nl, nm, nn   =      128     128     128
+ !(CDFFT_setup) plan_CD(1:2) =             65240528            65134528
+ !kp kv3 =     4 nspin =     1
+ ndim_spinor =            1
+ Special k-points generation starts.
+ number of k-points in MP mesh        =     8
+ number of k-points in full BZ        =     8
+ Special k-points generation ends.
+
+  === k-points generated or read ===
+ ik        CARTS                      BUCS                   QITG
+     1  0.0621  0.0621  0.0621     0.2500  0.2500  0.2500     0.2500
+     2 -0.0621 -0.0621  0.0621    -0.2500 -0.2500  0.2500     0.2500
+     3 -0.0621  0.0621 -0.0621    -0.2500  0.2500 -0.2500     0.2500
+     4 -0.0621  0.0621  0.0621    -0.2500  0.2500  0.2500     0.2500
+
+ <<< m_pwBS_for_each_WF >>>
+ !# ** kg1_ext, kg1, nbmx (=matrix size) =    34085   34085   36243
+ !#  JJT(=sum(iba)) =   136340 MEAN GRV =   4.99708839
+ !# pwbs kg_gamma =        0
+
+ ! iba(     1) =  34085,  nbase( 34085,     1) =   36174
+ ! iba(     2) =  34085,  nbase( 34085,     2) =   36243
+ ! iba(     3) =  34085,  nbase( 34085,     3) =   36238
+ ! iba(     4) =  34085,  nbase( 34085,     4) =   36237
+  F_POT(nfpp) = ../../../ppAll/Sn_ggapbe_us_01.pp
+ !PP CHECKING POTENTIAL FILE    37
+ !PP PP type --> GNCPP2 , is_gncpp =  2
+ !PP natomn, fval, iloc, itpcc =      50.000000     14.000000  2  0
+ !PP ggapbe    : NAME 
+ !PP read_ps_xctype: ps_xctype = ggapbe 
+ !PP     1.970000    0.780000    5.008600   -4.008600  :   ALP,CC
+ !PP 1501   96.000000   60.000000  :   nmesh,  xh, rmax
+ !PP it =    1 <<sum_of_vlocr>>
+ !PP Int_{i=1}^{nmesh} wos(i)vlocr(i)*radr(i)**2 =      -0.31831863D+02
+ !PP alp1, alp2, acoef =   1.97000000  0.78000000  5.00860000
+ !PP s      =      15.362555369629
+ !PP etot1  =       0.307479782374
+ !PP TOTAL ENERGY CORRECTION FROM PS     =     0.3074797824D+00
+ !** [asms extension] --- orbital index info ---
+ !* orbital index is not found in PP for it=           1
+ !** num of orbital index. for it =   1  is   0
+ !** max_num_orb_index =   0
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260054886295D+04
+ TOTCH (total charge) =        0.882000000000D+03
+ ### Warning(1309): Number of bands(neg) is insufficient:
+                totch =    882.000 >= neg*2.0 =    384.000
+ !** REMARK: the number of bands has been redefined
+ !** REMARK: sw_divide_subspace is reset to ON 
+ !** REMARK: npartition_david is reset to :        1
+ ### Warning(1309): Number of bands is enlarged         479
+ !PP modnrm =     1 (EXECUT)
+ !pwBS: nel_Ylm =     9 (m_pwBS_sphrp)
+ !! total ionic_charge is    0.0000000000000000      e
+ !! extra charge is   -0.0000000000000000      e
+ Charge density initialization: Gauss distrib func
+  <<< modified_gram_schmidt_vanderbilt_type >>>
+ !ibsize(=nblocksize_betar_w) (m_ES_betar_dot_WFs_4_each_k) =       32
+ ia_i, ia_f, msize =        1      27     297
+ ia_i, ia_f, msize =       28      54     297
+ ia_i, ia_f, msize =       55      63      99
+ mype =   0 msizemax, natm_redmax =      297      27
+ ! nblocksize_mgs_is_given is fault
+! NB(=nblocksize_mgs) (mgs_4_each_k_G) =        8
+ n_sub_names =    14 num_subroutines_statistics =    12
+ << cpu time statistics >>
+  no  id           subroutine name           time(sec)   count   no(2)
+    1   10            modified_gram_schmidt    26.00900       4       1
+    2    8               m_XC_cal_potential    10.02300       1       2
+    3   11                    betar_dot_Psi     4.34900       4       3
+    4   12              energy_eigen_values     1.89700       4       4
+    5   13             m_ES_WF_in_Rspace(1)     1.54800      32       5
+    6   14           m_ES_sort_eigen_values     1.00400       1       6
+    7    5              m_NLP_betar_dot_PWs     0.91300       1       7
+    8    2             m_PP_vanderbilt_type     0.08600       2       8
+    9    6            m_IS_structure_factor     0.06100       1       9
+   10    4                  m_PP_local_part     0.00800       1      10
+   11    1           m_IS_symm_check_of_pos     0.00100       1      11
+   12    7  m_CD_initial_CD_by_Gauss_func_kt    0.00100       1      12
+ <<Total elapsed CPU Time until now =    53.97700 (sec.)>>
+ ---- iteration(total, ionic, elelctronic) =        1       1       1 ----
+ !ibsize(=nblocksize_vnonlocal_w) (m_ES_Vnonlocal_W) =     1000
+ ---- Parameters decided in allocate_matrix of MdDavidson ---
+ -- npartition_david, nblock, np_e =        1       1       8 --
+ -- ista_e_l, iend_e_l, ielm_e_l --
+ (  1)        1        8        8
+ ### Warning(4202): Number of <<Negative Charge Density>> =      472, (node   0) =         0
+ TOTAL ENERGY FOR     1 -TH ITER=  -3880.348019833635  edel =  -0.388035D+04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    582.447021527880 HA=   3387.611525922984 XC=   -791.046460753254 LO=  -3267.977293746632
+ NL=  -1190.833439881498 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000509956806
+ PHYSICALLY CORRECT ENERGY =   -3880.347764855232
+ << CPU Time Consumption -- TOP  10 Subroutines (    1) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   161.64400 41.84      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   140.56100 36.38      12       2
+   3  15                 m_ES_Vnonlocal_W   124.28700 32.17      16       3
+   4  16           evolve_WFs_in_subspace    31.10000  8.05       4       4
+   5  10            modified_gram_schmidt    25.37000  6.57       4       5
+   6  11                    betar_dot_Psi    20.52600  5.31      20       6
+   7   8               m_XC_cal_potential    19.37500  5.02       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.20300  3.42     288       8
+   9  20                 prepare_Hloc_phi    13.05800  3.38      12       9
+  10  22                    m_CD_softpart     3.34200  0.87       1      10
+ Total cputime of (    1 )-th iteration     386.31700 /   440.294 (sec.)
+ ---- iteration(total, ionic, elelctronic) =        2       1       2 ----
+ TOTAL ENERGY FOR     2 -TH ITER=  -3951.738786754648  edel =  -0.713908D+02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    641.682395632193 HA=   2491.550948080355 XC=   -654.615276442816 LO=  -2876.522522548577
+ NL=   -953.285124194661 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000344334835
+ PHYSICALLY CORRECT ENERGY =   -3951.738614587231
+ ---- iteration(total, ionic, elelctronic) =        3       1       3 ----
+ TOTAL ENERGY FOR     3 -TH ITER=  -4221.657743303591  edel =  -0.269919D+03 : SOLVER = SUBMAT + PKOSUGI
+ KI=    592.061478017650 HA=   1942.498252896525 XC=   -575.296472489171 LO=  -2586.213602639687
+ NL=   -994.157749768727 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000786373873
+ PHYSICALLY CORRECT ENERGY =   -4221.657350116654
+ << CPU Time Consumption -- TOP  10 Subroutines (    3) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   164.38700 43.02      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   142.99500 37.42      12       2
+   3  15                 m_ES_Vnonlocal_W   118.80400 31.09      16       3
+   4  16           evolve_WFs_in_subspace    28.31800  7.41       4       4
+   5  10            modified_gram_schmidt    25.29700  6.62       4       5
+   6   8               m_XC_cal_potential    20.41800  5.34       2       6
+   7  11                    betar_dot_Psi    20.22100  5.29      20       7
+   8  13             m_ES_WF_in_Rspace(1)    13.46400  3.52     288       8
+   9  20                 prepare_Hloc_phi    13.18900  3.45      12       9
+  10  22                    m_CD_softpart     3.05000  0.80       1      10
+ Total cputime of (    3 )-th iteration     382.08600 /  1218.215 (sec.)
+ ---- iteration(total, ionic, elelctronic) =        4       1       4 ----
+ TOTAL ENERGY FOR     4 -TH ITER=  -4263.228913753455  edel =  -0.415712D+02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    604.368009452605 HA=   1759.493401677782 XC=   -549.444122552156 LO=  -2463.458701411599
+ NL=  -1013.638456496082 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000181477698
+ PHYSICALLY CORRECT ENERGY =   -4263.228823014606
+ ---- iteration(total, ionic, elelctronic) =        5       1       5 ----
+ TOTAL ENERGY FOR     5 -TH ITER=  -4275.556965573315  edel =  -0.123281D+02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    610.756290235487 HA=   1669.299710287944 XC=   -536.806910985923 LO=  -2397.550527834504
+ NL=  -1020.706664330011 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        6       1       6 ----
+ TOTAL ENERGY FOR     6 -TH ITER=  -4283.141071480655  edel =  -0.758411D+01 : SOLVER = SUBMAT + PKOSUGI
+ KI=    614.782939757226 HA=   1535.329654731685 XC=   -519.044671657297 LO=  -2289.241738149965
+ NL=  -1024.418393215995 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        7       1       7 ----
+ TOTAL ENERGY FOR     7 -TH ITER=  -4283.542860489765  edel =  -0.401789D+00 : SOLVER = SUBMAT + PKOSUGI
+ KI=    609.000359204349 HA=   1528.259093779862 XC=   -518.948039148609 LO=  -2278.371120726814
+ NL=  -1022.934290652246 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        8       1       8 ----
+ TOTAL ENERGY FOR     8 -TH ITER=  -4283.587412767157  edel =  -0.445523D-01 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.324707722280 HA=   1519.443029426636 XC=   -517.928760690633 LO=  -2270.178490189643
+ NL=  -1022.699036089489 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        9       1       9 ----
+ TOTAL ENERGY FOR     9 -TH ITER=  -4283.594072427103  edel =  -0.665966D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.207277318429 HA=   1521.245197417886 XC=   -518.125390175114 LO=  -2271.798215027495
+ NL=  -1022.574079014501 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (    9) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   105.94400 41.89      16       1
+   2  10            modified_gram_schmidt    59.30500 23.45       4       2
+   3  16           evolve_WFs_in_subspace    31.67800 12.53       4       3
+   4  11                    betar_dot_Psi    21.81300  8.63      20       4
+   5   8               m_XC_cal_potential    20.15900  7.97       2       5
+   6  13             m_ES_WF_in_Rspace(1)     9.80500  3.88     192       6
+   7  22                    m_CD_softpart     3.48100  1.38       1       7
+   8  12              energy_eigen_values     1.99800  0.79       4       8
+   9  23                    m_CD_hardpart     0.72000  0.28       1       9
+  10  25                   m_CD_mix_pulay     0.01200  0.00       1      10
+ Total cputime of (    9 )-th iteration     252.89000 /  3398.643 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       10       1      10 ----
+ TOTAL ENERGY FOR    10 -TH ITER=  -4283.597039401107  edel =  -0.296697D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.157387305318 HA=   1520.075581622762 XC=   -517.998237097323 LO=  -2270.726646932465
+ NL=  -1022.556261353093 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       11       1      11 ----
+ TOTAL ENERGY FOR    11 -TH ITER=  -4283.598578325295  edel =  -0.153892D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.134458077509 HA=   1519.911761457884 XC=   -518.014343079716 LO=  -2270.536822556915
+ NL=  -1022.544769277750 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       12       1      12 ----
+ TOTAL ENERGY FOR    12 -TH ITER=  -4283.598682440710  edel =  -0.104115D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.139976698821 HA=   1519.673807478890 XC=   -517.978075950619 LO=  -2270.341042536460
+ NL=  -1022.544485185033 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       13       1      13 ----
+ TOTAL ENERGY FOR    13 -TH ITER=  -4283.598697663998  edel =  -0.152233D-04 : SOLVER = SUBMAT + RMM3
+ KI=    608.136195532956 HA=   1519.786161674420 XC=   -517.991793668905 LO=  -2270.435358096336
+ NL=  -1022.545040159825 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       14       1      14 ----
+ TOTAL ENERGY FOR    14 -TH ITER=  -4283.598707552272  edel =  -0.988827D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.136919427935 HA=   1519.731223270484 XC=   -517.986188170859 LO=  -2270.386327277831
+ NL=  -1022.545471855693 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       15       1      15 ----
+ TOTAL ENERGY FOR    15 -TH ITER=  -4283.598709422957  edel =  -0.187069D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.136443380716 HA=   1519.739768587927 XC=   -517.987368240115 LO=  -2270.392766910389
+ NL=  -1022.545923294789 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       16       1      16 ----
+ TOTAL ENERGY FOR    16 -TH ITER=  -4283.598710003666  edel =  -0.580710D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.137711763174 HA=   1519.729673917785 XC=   -517.985951153438 LO=  -2270.385198102485
+ NL=  -1022.546083482395 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   16) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   117.77100 44.74      16       1
+   2  10            modified_gram_schmidt    60.07600 22.82       4       2
+   3  16           evolve_WFs_in_subspace    33.33800 12.66       4       3
+   4  11                    betar_dot_Psi    20.77600  7.89      20       4
+   5   8               m_XC_cal_potential    19.57300  7.43       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.33500  3.17     192       6
+   7  22                    m_CD_softpart     3.19200  1.21       1       7
+   8  12              energy_eigen_values     1.86600  0.71       4       8
+   9  23                    m_CD_hardpart     0.64600  0.25       1       9
+  10  25                   m_CD_mix_pulay     0.04200  0.02       1      10
+ Total cputime of (   16 )-th iteration     263.26100 /  5195.118 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       17       1      17 ----
+ TOTAL ENERGY FOR    17 -TH ITER=  -4283.598710394202  edel =  -0.390535D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.137691629881 HA=   1519.724993814940 XC=   -517.985604461725 LO=  -2270.380892526016
+ NL=  -1022.546035904973 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   17) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   113.93400 45.28      16       1
+   2  10            modified_gram_schmidt    51.48000 20.46       4       2
+   3  16           evolve_WFs_in_subspace    32.65300 12.98       4       3
+   4  11                    betar_dot_Psi    21.10300  8.39      20       4
+   5   8               m_XC_cal_potential    20.02100  7.96       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.90700  3.54     192       6
+   7  22                    m_CD_softpart     3.15900  1.26       1       7
+   8  12              energy_eigen_values     2.05700  0.82       4       8
+   9  23                    m_CD_hardpart     0.62100  0.25       1       9
+  10  25                   m_CD_mix_pulay     0.04800  0.02       1      10
+ Total cputime of (   17 )-th iteration     251.60200 /  5446.720 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       18       1      18 ----
+ TOTAL ENERGY FOR    18 -TH ITER=  -4283.598710481700  edel =  -0.874988D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.137472900173 HA=   1519.723997248697 XC=   -517.985669529679 LO=  -2270.379640922808
+ NL=  -1022.546007231775 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       19       1      19 ----
+ TOTAL ENERGY FOR    19 -TH ITER=  -4283.598710509837  edel =  -0.281370D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.137550178919 HA=   1519.724157508024 XC=   -517.985672139708 LO=  -2270.379870168927
+ NL=  -1022.546012941837 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2814D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       20       1      20 ----
+ TOTAL ENERGY FOR    20 -TH ITER=  -4283.598710522719  edel =  -0.128812D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.137549258680 HA=   1519.724147371913 XC=   -517.985643713870 LO=  -2270.379889774816
+ NL=  -1022.546010718317 EW=  -2600.548862946308 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1288D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.726894949747D-02 at the iteration_ionic of        1
+ !!  F_INP = ./nfinp.data                    
+tag_epsilon is not given in the inputfile <<CtrlP_rd_epsilon>>
+ F_INP      = ./nfinp.data , newly opened  
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     1      20 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      28   11.059420   17.379088   17.379088    0.004197   -0.004197   -0.004197    0.007269
+ !forc    2       2   11.059420   11.059420   11.059420    0.004196    0.004197    0.004197    0.007269
+ !forc    3      56   17.379088   17.379088   11.059420   -0.004196   -0.004196    0.004197    0.007268
+ !forc    4      46   17.379088   11.059420   17.379088   -0.004196    0.004196   -0.004196    0.007268
+ !forc    5      50   23.698756   23.698756   11.059420    0.000880    0.000880   -0.001405    0.001877
+ !forc    6       4   11.059420    4.739751    4.739751   -0.001405   -0.000880   -0.000880    0.001877
+ !forc    7      26   11.059420   23.698756   23.698756   -0.001405    0.000880    0.000880    0.001877
+ !forc    8      32    4.739751   17.379088   23.698756   -0.000880    0.001405    0.000880    0.001877
+ !forc    9      44   23.698756    4.739751   17.379088    0.000880   -0.000880    0.001405    0.001877
+ !forc   10       6    4.739751   11.059420    4.739751   -0.000880   -0.001405   -0.000880    0.001877
+ F_ENF      = ./nfefn.data , newly opened  
+ CG2: Next step is iter_CG = 1 and iter_linmin = 2
+  ! iteration_ionic =            2
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260091369461D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   20) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   117.33000 37.93      16       1
+   2  10            modified_gram_schmidt    79.03500 25.55       8       2
+   3  16           evolve_WFs_in_subspace    30.68900  9.92       4       3
+   4   8               m_XC_cal_potential    29.62100  9.58       3       4
+   5  11                    betar_dot_Psi    25.18500  8.14      24       5
+   6  26         m_Force_term_drv_of_flmt    15.49300  5.01       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.17600  3.29     224       7
+   8  12              energy_eigen_values     3.88000  1.25       8       8
+   9  22                    m_CD_softpart     3.21200  1.04       1       9
+  10  23                    m_CD_hardpart     0.62700  0.20       1      10
+ Total cputime of (   20 )-th iteration     309.34600 /  6270.628 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       21       2       1 ----
+ TOTAL ENERGY FOR    21 -TH ITER=  -4283.598865012198  edel =  -0.154489D-03 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.130869140421 HA=   1519.297090679442 XC=   -517.982096385700 LO=  -2269.584774943531
+ NL=  -1022.546258892491 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   21) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   160.12600 41.26      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   138.92400 35.80      12       2
+   3  15                 m_ES_Vnonlocal_W   118.86700 30.63      16       3
+   4  16           evolve_WFs_in_subspace    37.88200  9.76       4       4
+   5  10            modified_gram_schmidt    25.64900  6.61       4       5
+   6  11                    betar_dot_Psi    20.77500  5.35      20       6
+   7   8               m_XC_cal_potential    20.42500  5.26       2       7
+   8  20                 prepare_Hloc_phi    12.98800  3.35      12       8
+   9  13             m_ES_WF_in_Rspace(1)    12.98800  3.35     288       9
+  10  22                    m_CD_softpart     2.96200  0.76       1      10
+ Total cputime of (   21 )-th iteration     388.05200 /  6658.680 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       22       2       2 ----
+ TOTAL ENERGY FOR    22 -TH ITER=  -4283.598958065273  edel =  -0.930531D-04 : SOLVER = SUBMAT + RMM3
+ KI=    608.133443532963 HA=   1519.398293138690 XC=   -517.982616879834 LO=  -2269.687994348242
+ NL=  -1022.546388898510 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   22) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   119.51400 46.13      16       1
+   2  10            modified_gram_schmidt    51.33600 19.81       4       2
+   3  16           evolve_WFs_in_subspace    36.32200 14.02       4       3
+   4  11                    betar_dot_Psi    20.87700  8.06      20       4
+   5   8               m_XC_cal_potential    19.59900  7.56       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.18900  3.16     192       6
+   7  22                    m_CD_softpart     3.31100  1.28       1       7
+   8  12              energy_eigen_values     1.97800  0.76       4       8
+   9  23                    m_CD_hardpart     0.74900  0.29       1       9
+  10  24           m_CD_convergence_check     0.00800  0.00       1      10
+ Total cputime of (   22 )-th iteration     259.09500 /  6917.775 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       23       2       3 ----
+ TOTAL ENERGY FOR    23 -TH ITER=  -4283.599110088428  edel =  -0.152023D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.132446862674 HA=   1519.380647022753 XC=   -517.982912797172 LO=  -2269.668676506822
+ NL=  -1022.546920059521 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       24       2       4 ----
+ TOTAL ENERGY FOR    24 -TH ITER=  -4283.599117504255  edel =  -0.741583D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.132020484744 HA=   1519.368086794200 XC=   -517.982471688225 LO=  -2269.656334339748
+ NL=  -1022.546724144887 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       25       2       5 ----
+ TOTAL ENERGY FOR    25 -TH ITER=  -4283.599119376654  edel =  -0.187240D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.131873205517 HA=   1519.361085464655 XC=   -517.982371708125 LO=  -2269.649334031018
+ NL=  -1022.546677697344 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       26       2       6 ----
+ TOTAL ENERGY FOR    26 -TH ITER=  -4283.599119373830  edel =   0.282398D-08 : SOLVER = SUBMAT + RMM3
+ KI=    608.131919152500 HA=   1519.360867746922 XC=   -517.982451377619 LO=  -2269.649058343723
+ NL=  -1022.546701941571 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =   0.2824D-08 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       27       2       7 ----
+ TOTAL ENERGY FOR    27 -TH ITER=  -4283.599119514115  edel =  -0.140285D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.132119276841 HA=   1519.365125743344 XC=   -517.982617689492 LO=  -2269.653323492531
+ NL=  -1022.546728741937 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       28       2       8 ----
+ TOTAL ENERGY FOR    28 -TH ITER=  -4283.599119529152  edel =  -0.150367D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.132111697027 HA=   1519.364371542275 XC=   -517.982596293501 LO=  -2269.652580040753
+ NL=  -1022.546731823862 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1504D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       29       2       9 ----
+ TOTAL ENERGY FOR    29 -TH ITER=  -4283.599119529128  edel =   0.236469D-10 : SOLVER = SUBMAT + RMM3
+ KI=    608.132107809924 HA=   1519.364221781038 XC=   -517.982593013769 LO=  -2269.652426008725
+ NL=  -1022.546735487257 EW=  -2600.913694610339 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =   0.2365D-10 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.679273966103D-02 at the iteration_ionic of        2
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     2      29 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      56   17.370695   17.370695   11.067813   -0.003922   -0.003922    0.003922    0.006793
+ !forc    2       2   11.067812   11.067813   11.067813    0.003922    0.003922    0.003922    0.006793
+ !forc    3      46   17.370695   11.067812   17.370695   -0.003922    0.003922   -0.003922    0.006793
+ !forc    4      28   11.067813   17.370695   17.370694    0.003922   -0.003922   -0.003922    0.006793
+ !forc    5       4   11.059420    4.739751    4.739751   -0.001423   -0.000861   -0.000861    0.001873
+ !forc    6      26   11.059420   23.698756   23.698756   -0.001423    0.000861    0.000861    0.001873
+ !forc    7      50   23.698756   23.698756   11.059420    0.000861    0.000861   -0.001423    0.001873
+ !forc    8       8    4.739751    4.739751   11.059420   -0.000861   -0.000861   -0.001423    0.001873
+ !forc    9      42   23.698756   11.059420   23.698756    0.000861   -0.001423    0.000861    0.001873
+ !forc   10      30    4.739751   23.698756   17.379088   -0.000861    0.000861    0.001423    0.001873
+ F_ENF      = ./nfefn.data , newly opened  
+ CG2: F_parallel =  0.014537  0.013585
+ CG2: alpha(force ) =   30.550364853427983     
+ CG2: Linmin calculated.
+ CG2: Original alpha =  30.5503648534
+ CG2: Alpha is too large, then, adjusted.
+ CG2: Alpha =  20.0000000000
+ CG2: Next step is iter_CG = 1 and iter_linmin = 3
+  ! iteration_ionic =            3
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260410873535D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   29) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   116.21400 36.73      16       1
+   2  10            modified_gram_schmidt    85.93300 27.16       8       2
+   3  16           evolve_WFs_in_subspace    34.42900 10.88       4       3
+   4   8               m_XC_cal_potential    29.75200  9.40       3       4
+   5  11                    betar_dot_Psi    24.55700  7.76      24       5
+   6  26         m_Force_term_drv_of_flmt    15.45800  4.89       1       6
+   7  13             m_ES_WF_in_Rspace(1)     9.78600  3.09     224       7
+   8  12              energy_eigen_values     3.91100  1.24       8       8
+   9  22                    m_CD_softpart     3.07700  0.97       1       9
+  10  23                    m_CD_hardpart     0.62200  0.20       1      10
+ Total cputime of (   29 )-th iteration     316.37700 /  8794.061 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       30       3       1 ----
+ TOTAL ENERGY FOR    30 -TH ITER=  -4283.599427089105  edel =  -0.307560D-03 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.021699700738 HA=   1515.919294377701 XC=   -517.965437341960 LO=  -2262.929602325100
+ NL=  -1022.536646154333 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   30) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   159.41000 41.12      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   137.42200 35.45      12       2
+   3  15                 m_ES_Vnonlocal_W   122.17100 31.51      16       3
+   4  16           evolve_WFs_in_subspace    34.32300  8.85       4       4
+   5  10            modified_gram_schmidt    25.46900  6.57       4       5
+   6  11                    betar_dot_Psi    20.80600  5.37      20       6
+   7   8               m_XC_cal_potential    19.95500  5.15       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.39000  3.45     288       8
+   9  20                 prepare_Hloc_phi    13.06100  3.37      12       9
+  10  22                    m_CD_softpart     3.17000  0.82       1      10
+ Total cputime of (   30 )-th iteration     387.66500 /  9181.727 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       31       3       2 ----
+ TOTAL ENERGY FOR    31 -TH ITER=  -4283.591287681144  edel =   0.813941D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.095380758983 HA=   1516.057856895189 XC=   -517.922926766587 LO=  -2263.185127442858
+ NL=  -1022.527735779720 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   31) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   117.94900 45.15      16       1
+   2  10            modified_gram_schmidt    55.75600 21.34       4       2
+   3  16           evolve_WFs_in_subspace    35.26700 13.50       4       3
+   4  11                    betar_dot_Psi    20.49000  7.84      20       4
+   5   8               m_XC_cal_potential    19.97300  7.65       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.48600  3.25     192       6
+   7  22                    m_CD_softpart     3.28000  1.26       1       7
+   8  12              energy_eigen_values     1.96100  0.75       4       8
+   9  23                    m_CD_hardpart     0.62300  0.24       1       9
+  10  24           m_CD_convergence_check     0.01000  0.00       1      10
+ Total cputime of (   31 )-th iteration     261.24100 /  9442.967 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       32       3       3 ----
+ TOTAL ENERGY FOR    32 -TH ITER=  -4283.600368799217  edel =  -0.908112D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.076895558193 HA=   1516.287802780713 XC=   -517.959320880755 LO=  -2263.340968191147
+ NL=  -1022.556042720070 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       33       3       4 ----
+ TOTAL ENERGY FOR    33 -TH ITER=  -4283.600809134477  edel =  -0.440335D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.080505210715 HA=   1516.206377977822 XC=   -517.950864713883 LO=  -2263.276409968953
+ NL=  -1022.551682294028 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       34       3       5 ----
+ TOTAL ENERGY FOR    34 -TH ITER=  -4283.600901925471  edel =  -0.927910D-04 : SOLVER = SUBMAT + RMM3
+ KI=    608.079995831612 HA=   1516.184291364294 XC=   -517.952150888667 LO=  -2263.251824941677
+ NL=  -1022.552477944882 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       35       3       6 ----
+ TOTAL ENERGY FOR    35 -TH ITER=  -4283.600909849010  edel =  -0.792354D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.081562280246 HA=   1516.183025140960 XC=   -517.952387086219 LO=  -2263.251241620737
+ NL=  -1022.553133217110 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       36       3       7 ----
+ TOTAL ENERGY FOR    36 -TH ITER=  -4283.600922917291  edel =  -0.130683D-04 : SOLVER = SUBMAT + RMM3
+ KI=    608.082767341162 HA=   1516.211699274590 XC=   -517.953719431396 LO=  -2263.279380583167
+ NL=  -1022.553554172328 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       37       3       8 ----
+ TOTAL ENERGY FOR    37 -TH ITER=  -4283.600923575948  edel =  -0.658658D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.083281610108 HA=   1516.213227397263 XC=   -517.953626901813 LO=  -2263.281401332306
+ NL=  -1022.553669003050 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       38       3       9 ----
+ TOTAL ENERGY FOR    38 -TH ITER=  -4283.600923617320  edel =  -0.413720D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.083152667404 HA=   1516.211278520295 XC=   -517.953579425783 LO=  -2263.279296938070
+ NL=  -1022.553743095016 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.4137D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   38) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   115.65500 44.55      16       1
+   2  10            modified_gram_schmidt    53.27200 20.52       4       2
+   3  16           evolve_WFs_in_subspace    37.75100 14.54       4       3
+   4   8               m_XC_cal_potential    20.66600  7.96       2       4
+   5  11                    betar_dot_Psi    20.51800  7.90      20       5
+   6  13             m_ES_WF_in_Rspace(1)     8.71600  3.36     192       6
+   7  22                    m_CD_softpart     3.17900  1.22       1       7
+   8  12              energy_eigen_values     1.88500  0.73       4       8
+   9  23                    m_CD_hardpart     0.73100  0.28       1       9
+  10  25                   m_CD_mix_pulay     0.01600  0.01       1      10
+ Total cputime of (   38 )-th iteration     259.59200 / 11231.001 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       39       3      10 ----
+ TOTAL ENERGY FOR    39 -TH ITER=  -4283.600923762046  edel =  -0.144725D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.083355999319 HA=   1516.214147920728 XC=   -517.953672474027 LO=  -2263.282229010549
+ NL=  -1022.553790851365 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       40       3      11 ----
+ TOTAL ENERGY FOR    40 -TH ITER=  -4283.600923771683  edel =  -0.963701D-08 : SOLVER = SUBMAT + RMM3
+ KI=    608.083366680836 HA=   1516.214262938677 XC=   -517.953670902840 LO=  -2263.282349050348
+ NL=  -1022.553798091855 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.9637D-08 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       41       3      12 ----
+ TOTAL ENERGY FOR    41 -TH ITER=  -4283.600923772909  edel =  -0.122600D-08 : SOLVER = SUBMAT + RMM3
+ KI=    608.083374741566 HA=   1516.214304377251 XC=   -517.953670907110 LO=  -2263.282394125949
+ NL=  -1022.553802512517 EW=  -2604.108735346151 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1226D-08 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.909192980580D-03 at the iteration_ionic of        3
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     3      41 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      29    7.899585   14.219254   20.538922    0.001957    0.000672   -0.001957    0.002847
+ !forc    2      58   14.219254   20.538922   20.538922   -0.000672   -0.001957   -0.001957    0.002847
+ !forc    3      35   14.219254    7.899585    7.899585   -0.000672    0.001957    0.001957    0.002847
+ !forc    4      53   20.538922   14.219254    7.899585   -0.001957    0.000672    0.001956    0.002847
+ !forc    5      31    7.899585   20.538922   14.219254    0.001956   -0.001956    0.000672    0.002847
+ !forc    6      21    7.899585   14.219254    7.899585    0.001956   -0.000672    0.001956    0.002847
+ !forc    7      47   20.538922    7.899585   14.219254   -0.001956    0.001956    0.000672    0.002847
+ !forc    8      51   14.219254   20.538922    7.899585    0.000672   -0.001956    0.001956    0.002847
+ !forc    9      15    7.899585    7.899585   14.219254    0.001956    0.001956   -0.000672    0.002847
+ !forc   10      43   14.219254    7.899585   20.538922    0.000672    0.001956   -0.001956    0.002847
+ F_ENF      = ./nfefn.data , newly opened  
+ !! kqnmditer_p =      6 <<m_IS_gdiis_alloc>>
+max. optimal force obtained from the BFGS update :         0.0009091930
+  ! iteration_ionic =            4
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260408713073D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   41) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   111.19200 35.63      16       1
+   2  10            modified_gram_schmidt    83.29500 26.69       8       2
+   3  16           evolve_WFs_in_subspace    35.70300 11.44       4       3
+   4   8               m_XC_cal_potential    29.79300  9.55       3       4
+   5  11                    betar_dot_Psi    24.49400  7.85      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46500  4.96       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.49500  3.36     224       7
+   8  12              energy_eigen_values     3.92800  1.26       8       8
+   9  22                    m_CD_softpart     3.12900  1.00       1       9
+  10  23                    m_CD_hardpart     0.64700  0.21       1      10
+ Total cputime of (   41 )-th iteration     312.08100 / 12052.147 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       42       4       1 ----
+ TOTAL ENERGY FOR    42 -TH ITER=  -4283.600927256944  edel =  -0.348404D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.083765375040 HA=   1516.236213989380 XC=   -517.953967635973 LO=  -2263.326030978377
+ NL=  -1022.553777281714 EW=  -2604.087130725301 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   42) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   160.06600 40.82      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   139.17500 35.49      12       2
+   3  15                 m_ES_Vnonlocal_W   125.76200 32.07      16       3
+   4  16           evolve_WFs_in_subspace    35.38400  9.02       4       4
+   5  10            modified_gram_schmidt    26.28000  6.70       4       5
+   6  11                    betar_dot_Psi    20.78700  5.30      20       6
+   7   8               m_XC_cal_potential    20.27900  5.17       2       7
+   8  20                 prepare_Hloc_phi    12.96100  3.31      12       8
+   9  13             m_ES_WF_in_Rspace(1)    12.75500  3.25     288       9
+  10  22                    m_CD_softpart     3.18000  0.81       1      10
+ Total cputime of (   42 )-th iteration     392.13100 / 12444.278 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       43       4       2 ----
+ TOTAL ENERGY FOR    43 -TH ITER=  -4283.600927273498  edel =  -0.165537D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.083783081798 HA=   1516.236308065913 XC=   -517.953917000661 LO=  -2263.326203789020
+ NL=  -1022.553766906227 EW=  -2604.087130725301 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1655D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   43) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   106.19600 39.80      16       1
+   2  10            modified_gram_schmidt    72.78000 27.28       4       2
+   3  16           evolve_WFs_in_subspace    32.68000 12.25       4       3
+   4  11                    betar_dot_Psi    21.01800  7.88      20       4
+   5   8               m_XC_cal_potential    19.47000  7.30       2       5
+   6  13             m_ES_WF_in_Rspace(1)     9.77300  3.66     192       6
+   7  22                    m_CD_softpart     3.36300  1.26       1       7
+   8  12              energy_eigen_values     1.83300  0.69       4       8
+   9  23                    m_CD_hardpart     0.74600  0.28       1       9
+  10  24           m_CD_convergence_check     0.00600  0.00       1      10
+ Total cputime of (   43 )-th iteration     266.79900 / 12711.077 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       44       4       3 ----
+ TOTAL ENERGY FOR    44 -TH ITER=  -4283.600927281550  edel =  -0.805176D-08 : SOLVER = SUBMAT + RMM3
+ KI=    608.083753920330 HA=   1516.236233860447 XC=   -517.953923167772 LO=  -2263.326096560291
+ NL=  -1022.553764608962 EW=  -2604.087130725301 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.8052D-08 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.986322227805D-03 at the iteration_ionic of        4
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     4      44 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000663   -0.001949   -0.001949    0.002835
+ !forc    2      29    7.899585   14.219254   20.538922    0.001949    0.000663   -0.001949    0.002835
+ !forc    3      35   14.219254    7.899585    7.899585   -0.000663    0.001949    0.001949    0.002835
+ !forc    4      53   20.538922   14.219254    7.899585   -0.001949    0.000663    0.001949    0.002835
+ !forc    5      21    7.899585   14.219254    7.899585    0.001949   -0.000663    0.001949    0.002835
+ !forc    6      47   20.538922    7.899585   14.219254   -0.001949    0.001949    0.000663    0.002835
+ !forc    7      31    7.899585   20.538922   14.219254    0.001949   -0.001949    0.000663    0.002835
+ !forc    8      51   14.219254   20.538922    7.899585    0.000663   -0.001949    0.001949    0.002835
+ !forc    9      43   14.219254    7.899585   20.538922    0.000663    0.001949   -0.001949    0.002835
+ !forc   10      15    7.899585    7.899585   14.219254    0.001949    0.001949   -0.000663    0.002835
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0009863222
+  ! iteration_ionic =            5
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260406368425D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   44) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   112.11900 35.22      16       1
+   2  10            modified_gram_schmidt    93.31900 29.31       8       2
+   3  16           evolve_WFs_in_subspace    31.41000  9.87       4       3
+   4   8               m_XC_cal_potential    29.41100  9.24       3       4
+   5  11                    betar_dot_Psi    24.87600  7.81      24       5
+   6  26         m_Force_term_drv_of_flmt    15.44400  4.85       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.22400  3.21     224       7
+   8  12              energy_eigen_values     3.88400  1.22       8       8
+   9  22                    m_CD_softpart     3.15400  0.99       1       9
+  10  23                    m_CD_hardpart     0.74100  0.23       1      10
+ Total cputime of (   44 )-th iteration     318.33800 / 13029.415 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       45       5       1 ----
+ TOTAL ENERGY FOR    45 -TH ITER=  -4283.600931555691  edel =  -0.427414D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.084127526034 HA=   1516.259292942074 XC=   -517.954206175749 LO=  -2263.372744256730
+ NL=  -1022.553717339634 EW=  -2604.063684251687 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   45) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   159.74200 41.49      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   138.71900 36.03      12       2
+   3  15                 m_ES_Vnonlocal_W   120.76300 31.36      16       3
+   4  16           evolve_WFs_in_subspace    32.97200  8.56       4       4
+   5  10            modified_gram_schmidt    25.57400  6.64       4       5
+   6   8               m_XC_cal_potential    20.49900  5.32       2       6
+   7  11                    betar_dot_Psi    20.38600  5.29      20       7
+   8  13             m_ES_WF_in_Rspace(1)    13.16400  3.42     288       8
+   9  20                 prepare_Hloc_phi    12.96000  3.37      12       9
+  10  22                    m_CD_softpart     3.65900  0.95       1      10
+ Total cputime of (   45 )-th iteration     385.05200 / 13414.468 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       46       5       2 ----
+ TOTAL ENERGY FOR    46 -TH ITER=  -4283.600931576968  edel =  -0.212767D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.084151819236 HA=   1516.259474178335 XC=   -517.954151932218 LO=  -2263.373012994818
+ NL=  -1022.553708395815 EW=  -2604.063684251687 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2128D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   46) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   112.85700 43.04      16       1
+   2  10            modified_gram_schmidt    64.17700 24.47       4       2
+   3  16           evolve_WFs_in_subspace    31.01000 11.83       4       3
+   4  11                    betar_dot_Psi    21.15500  8.07      20       4
+   5   8               m_XC_cal_potential    20.79000  7.93       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.41300  3.21     192       6
+   7  22                    m_CD_softpart     3.35900  1.28       1       7
+   8  12              energy_eigen_values     2.02000  0.77       4       8
+   9  23                    m_CD_hardpart     0.63800  0.24       1       9
+  10  24           m_CD_convergence_check     0.00900  0.00       1      10
+ Total cputime of (   46 )-th iteration     262.22000 / 13676.687 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       47       5       3 ----
+ TOTAL ENERGY FOR    47 -TH ITER=  -4283.600931586488  edel =  -0.951968D-08 : SOLVER = SUBMAT + RMM3
+ KI=    608.084122937308 HA=   1516.259403355268 XC=   -517.954159257403 LO=  -2263.372906949685
+ NL=  -1022.553707420288 EW=  -2604.063684251687 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.9520D-08 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.110877233914D-02 at the iteration_ionic of        5
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     5      47 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000659   -0.001942   -0.001942    0.002825
+ !forc    2      29    7.899585   14.219254   20.538922    0.001942    0.000659   -0.001942    0.002825
+ !forc    3      35   14.219254    7.899585    7.899585   -0.000659    0.001942    0.001942    0.002825
+ !forc    4      53   20.538922   14.219254    7.899585   -0.001942    0.000659    0.001942    0.002825
+ !forc    5      21    7.899585   14.219254    7.899585    0.001942   -0.000659    0.001942    0.002825
+ !forc    6      47   20.538922    7.899585   14.219254   -0.001942    0.001942    0.000659    0.002825
+ !forc    7      31    7.899585   20.538922   14.219254    0.001942   -0.001942    0.000659    0.002824
+ !forc    8      51   14.219254   20.538922    7.899585    0.000659   -0.001942    0.001942    0.002824
+ !forc    9      15    7.899585    7.899585   14.219254    0.001942    0.001942   -0.000659    0.002824
+ !forc   10      43   14.219254    7.899585   20.538922    0.000659    0.001942   -0.001942    0.002824
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0011087723
+  ! iteration_ionic =            6
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260403731243D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   47) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   109.92600 34.71      16       1
+   2  10            modified_gram_schmidt    90.13900 28.47       8       2
+   3  16           evolve_WFs_in_subspace    33.54700 10.59       4       3
+   4   8               m_XC_cal_potential    30.32400  9.58       3       4
+   5  11                    betar_dot_Psi    25.13300  7.94      24       5
+   6  26         m_Force_term_drv_of_flmt    15.47000  4.89       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.39300  3.28     224       7
+   8  12              energy_eigen_values     3.90700  1.23       8       8
+   9  22                    m_CD_softpart     3.24400  1.02       1       9
+  10  23                    m_CD_hardpart     0.64900  0.20       1      10
+ Total cputime of (   47 )-th iteration     316.66100 / 13993.348 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       48       6       1 ----
+ TOTAL ENERGY FOR    48 -TH ITER=  -4283.600936938660  edel =  -0.535217D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.084585217825 HA=   1516.285936978347 XC=   -517.954508875538 LO=  -2263.425969697978
+ NL=  -1022.553668130353 EW=  -2604.037312430963 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   48) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   167.44900 43.15      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   146.85000 37.84      12       2
+   3  15                 m_ES_Vnonlocal_W   114.40700 29.48      16       3
+   4  16           evolve_WFs_in_subspace    35.13600  9.05       4       4
+   5  10            modified_gram_schmidt    25.73600  6.63       4       5
+   6  11                    betar_dot_Psi    20.41900  5.26      20       6
+   7   8               m_XC_cal_potential    19.51900  5.03       2       7
+   8  20                 prepare_Hloc_phi    13.95000  3.59      12       8
+   9  13             m_ES_WF_in_Rspace(1)    13.62500  3.51     288       9
+  10  22                    m_CD_softpart     3.12200  0.80       1      10
+ Total cputime of (   48 )-th iteration     388.10700 / 14381.455 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       49       6       2 ----
+ TOTAL ENERGY FOR    49 -TH ITER=  -4283.600936964141  edel =  -0.254804D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.084603151187 HA=   1516.285990176446 XC=   -517.954435437739 LO=  -2263.426126141050
+ NL=  -1022.553656282021 EW=  -2604.037312430963 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2548D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   49) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   118.28500 45.45      16       1
+   2  10            modified_gram_schmidt    55.01700 21.14       4       2
+   3  16           evolve_WFs_in_subspace    33.58700 12.91       4       3
+   4  11                    betar_dot_Psi    21.21100  8.15      20       4
+   5   8               m_XC_cal_potential    20.31300  7.81       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.99800  3.46     192       6
+   7  22                    m_CD_softpart     3.13900  1.21       1       7
+   8  12              energy_eigen_values     2.16900  0.83       4       8
+   9  23                    m_CD_hardpart     0.64800  0.25       1       9
+  10  24           m_CD_convergence_check     0.00900  0.00       1      10
+ Total cputime of (   49 )-th iteration     260.24500 / 14641.700 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       50       6       3 ----
+ TOTAL ENERGY FOR    50 -TH ITER=  -4283.600936983287  edel =  -0.191467D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.084561065752 HA=   1516.285789769642 XC=   -517.954440139647 LO=  -2263.425882264910
+ NL=  -1022.553652983162 EW=  -2604.037312430963 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1915D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.122377974446D-02 at the iteration_ionic of        6
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     6      50 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000653   -0.001934   -0.001934    0.002812
+ !forc    2      29    7.899585   14.219254   20.538922    0.001934    0.000653   -0.001934    0.002812
+ !forc    3      35   14.219254    7.899585    7.899585   -0.000653    0.001934    0.001934    0.002812
+ !forc    4      53   20.538922   14.219254    7.899585   -0.001934    0.000653    0.001934    0.002812
+ !forc    5      21    7.899585   14.219254    7.899585    0.001934   -0.000652    0.001934    0.002812
+ !forc    6      47   20.538922    7.899585   14.219254   -0.001934    0.001934    0.000652    0.002812
+ !forc    7      31    7.899585   20.538922   14.219254    0.001934   -0.001934    0.000652    0.002812
+ !forc    8      51   14.219254   20.538922    7.899585    0.000652   -0.001934    0.001934    0.002812
+ !forc    9      43   14.219254    7.899585   20.538922    0.000652    0.001934   -0.001934    0.002812
+ !forc   10      15    7.899585    7.899585   14.219254    0.001934    0.001934   -0.000652    0.002812
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0012237797
+  ! iteration_ionic =            7
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260400818895D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   50) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   113.97400 36.22      16       1
+   2  10            modified_gram_schmidt    82.63300 26.26       8       2
+   3  16           evolve_WFs_in_subspace    35.85600 11.39       4       3
+   4   8               m_XC_cal_potential    30.36000  9.65       3       4
+   5  11                    betar_dot_Psi    25.25800  8.03      24       5
+   6  26         m_Force_term_drv_of_flmt    15.48400  4.92       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.43700  3.32     224       7
+   8  12              energy_eigen_values     4.20000  1.33       8       8
+   9  22                    m_CD_softpart     3.18600  1.01       1       9
+  10  23                    m_CD_hardpart     0.66100  0.21       1      10
+ Total cputime of (   50 )-th iteration     314.70200 / 14956.402 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       51       7       1 ----
+ TOTAL ENERGY FOR    51 -TH ITER=  -4283.600943518930  edel =  -0.653564D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.085048367497 HA=   1516.314712110089 XC=   -517.954810837286 LO=  -2263.484103106846
+ NL=  -1022.553601098152 EW=  -2604.008188954231 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   51) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   158.89000 41.73      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   137.85900 36.21      12       2
+   3  15                 m_ES_Vnonlocal_W   119.22700 31.31      16       3
+   4  16           evolve_WFs_in_subspace    32.42400  8.52       4       4
+   5  10            modified_gram_schmidt    24.68600  6.48       4       5
+   6   8               m_XC_cal_potential    20.44800  5.37       2       6
+   7  11                    betar_dot_Psi    20.39700  5.36      20       7
+   8  13             m_ES_WF_in_Rspace(1)    13.33200  3.50     288       8
+   9  20                 prepare_Hloc_phi    13.17400  3.46      12       9
+  10  22                    m_CD_softpart     3.23800  0.85       1      10
+ Total cputime of (   51 )-th iteration     380.74000 / 15337.142 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       52       7       2 ----
+ TOTAL ENERGY FOR    52 -TH ITER=  -4283.600943549873  edel =  -0.309428D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.085070687611 HA=   1516.314841898892 XC=   -517.954730290661 LO=  -2263.484348060447
+ NL=  -1022.553588831037 EW=  -2604.008188954231 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.3094D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   52) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   115.83100 44.57      16       1
+   2  10            modified_gram_schmidt    59.14100 22.76       4       2
+   3  16           evolve_WFs_in_subspace    32.01600 12.32       4       3
+   4  11                    betar_dot_Psi    21.11500  8.12      20       4
+   5   8               m_XC_cal_potential    20.20100  7.77       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.31200  3.20     192       6
+   7  22                    m_CD_softpart     3.17300  1.22       1       7
+   8  12              energy_eigen_values     1.94900  0.75       4       8
+   9  23                    m_CD_hardpart     0.62600  0.24       1       9
+  10  24           m_CD_convergence_check     0.02700  0.01       1      10
+ Total cputime of (   52 )-th iteration     259.87700 / 15597.020 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       53       7       3 ----
+ TOTAL ENERGY FOR    53 -TH ITER=  -4283.600943574143  edel =  -0.242699D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.085024403865 HA=   1516.314616267592 XC=   -517.954736326751 LO=  -2263.484073225427
+ NL=  -1022.553585739191 EW=  -2604.008188954231 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2427D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.134494618057D-02 at the iteration_ionic of        7
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     7      53 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000647   -0.001925   -0.001925    0.002799
+ !forc    2      29    7.899585   14.219254   20.538922    0.001925    0.000647   -0.001925    0.002799
+ !forc    3      53   20.538922   14.219254    7.899585   -0.001925    0.000647    0.001925    0.002799
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000647    0.001925    0.001925    0.002799
+ !forc    5      21    7.899585   14.219254    7.899585    0.001925   -0.000647    0.001925    0.002798
+ !forc    6      47   20.538922    7.899585   14.219254   -0.001925    0.001925    0.000647    0.002798
+ !forc    7      51   14.219254   20.538922    7.899585    0.000647   -0.001925    0.001925    0.002798
+ !forc    8      31    7.899585   20.538922   14.219254    0.001925   -0.001925    0.000647    0.002798
+ !forc    9      43   14.219254    7.899585   20.538922    0.000647    0.001925   -0.001925    0.002798
+ !forc   10      15    7.899585    7.899585   14.219254    0.001925    0.001925   -0.000647    0.002798
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0013449462
+  ! iteration_ionic =            8
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260397616130D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   53) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   119.08100 36.29      16       1
+   2  10            modified_gram_schmidt    92.76600 28.27       8       2
+   3  16           evolve_WFs_in_subspace    33.76800 10.29       4       3
+   4   8               m_XC_cal_potential    30.31000  9.24       3       4
+   5  11                    betar_dot_Psi    25.29200  7.71      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46700  4.71       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.13100  3.09     224       7
+   8  12              energy_eigen_values     3.81700  1.16       8       8
+   9  22                    m_CD_softpart     3.29700  1.00       1       9
+  10  14           m_ES_sort_eigen_values     0.77000  0.23       1      10
+ Total cputime of (   53 )-th iteration     328.14900 / 15925.169 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       54       8       1 ----
+ TOTAL ENERGY FOR    54 -TH ITER=  -4283.600951407529  edel =  -0.783339D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.085574613350 HA=   1516.346600990212 XC=   -517.955154798290 LO=  -2263.548276783108
+ NL=  -1022.553534125127 EW=  -2603.976161304568 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   54) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   170.71600 43.47      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   148.91600 37.92      12       2
+   3  15                 m_ES_Vnonlocal_W   113.43900 28.88      16       3
+   4  16           evolve_WFs_in_subspace    38.68600  9.85       4       4
+   5  10            modified_gram_schmidt    25.33500  6.45       4       5
+   6  11                    betar_dot_Psi    20.88100  5.32      20       6
+   7   8               m_XC_cal_potential    19.93900  5.08       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.11700  3.34     288       8
+   9  20                 prepare_Hloc_phi    13.01200  3.31      12       9
+  10  22                    m_CD_softpart     3.26300  0.83       1      10
+ Total cputime of (   54 )-th iteration     392.75600 / 16317.924 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       55       8       2 ----
+ TOTAL ENERGY FOR    55 -TH ITER=  -4283.600951444585  edel =  -0.370555D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.085597892571 HA=   1516.346753426320 XC=   -517.955062545042 LO=  -2263.548558940861
+ NL=  -1022.553519973005 EW=  -2603.976161304568 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.3706D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   55) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   114.25800 42.86      16       1
+   2  10            modified_gram_schmidt    65.06900 24.41       4       2
+   3  16           evolve_WFs_in_subspace    35.02400 13.14       4       3
+   4  11                    betar_dot_Psi    20.81500  7.81      20       4
+   5   8               m_XC_cal_potential    19.60300  7.35       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.54100  3.20     192       6
+   7  22                    m_CD_softpart     3.26300  1.22       1       7
+   8  12              energy_eigen_values     2.10000  0.79       4       8
+   9  23                    m_CD_hardpart     0.74300  0.28       1       9
+  10  24           m_CD_convergence_check     0.00800  0.00       1      10
+ Total cputime of (   55 )-th iteration     266.59600 / 16584.521 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       56       8       3 ----
+ TOTAL ENERGY FOR    56 -TH ITER=  -4283.600951479602  edel =  -0.350174D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.085542573845 HA=   1516.346455657130 XC=   -517.955068248879 LO=  -2263.548204429436
+ NL=  -1022.553515727694 EW=  -2603.976161304568 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.3502D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.145608230224D-02 at the iteration_ionic of        8
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     8      56 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000640   -0.001916   -0.001916    0.002784
+ !forc    2      29    7.899585   14.219254   20.538922    0.001916    0.000640   -0.001916    0.002784
+ !forc    3      53   20.538922   14.219254    7.899585   -0.001916    0.000640    0.001916    0.002784
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000640    0.001916    0.001916    0.002784
+ !forc    5      21    7.899585   14.219254    7.899585    0.001915   -0.000640    0.001915    0.002783
+ !forc    6      47   20.538922    7.899585   14.219254   -0.001915    0.001915    0.000640    0.002783
+ !forc    7      51   14.219254   20.538922    7.899585    0.000640   -0.001915    0.001915    0.002783
+ !forc    8      31    7.899585   20.538922   14.219254    0.001915   -0.001915    0.000640    0.002783
+ !forc    9      43   14.219254    7.899585   20.538922    0.000640    0.001915   -0.001915    0.002783
+ !forc   10      15    7.899585    7.899585   14.219254    0.001915    0.001915   -0.000640    0.002783
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0014560823
+  ! iteration_ionic =            9
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260394146301D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   56) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   116.15900 37.60      16       1
+   2  10            modified_gram_schmidt    80.61400 26.09       8       2
+   3   8               m_XC_cal_potential    29.73000  9.62       3       3
+   4  16           evolve_WFs_in_subspace    29.47400  9.54       4       4
+   5  11                    betar_dot_Psi    24.97900  8.09      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46700  5.01       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.26600  3.32     224       7
+   8  12              energy_eigen_values     3.83400  1.24       8       8
+   9  22                    m_CD_softpart     3.55100  1.15       1       9
+  10  14           m_ES_sort_eigen_values     0.74800  0.24       1      10
+ Total cputime of (   56 )-th iteration     308.92700 / 16893.447 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       57       9       1 ----
+ TOTAL ENERGY FOR    57 -TH ITER=  -4283.600960625128  edel =  -0.914553D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.086128699689 HA=   1516.380903773942 XC=   -517.955515262764 LO=  -2263.617558628776
+ NL=  -1022.553456197397 EW=  -2603.941463009823 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   57) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   164.51100 42.57      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   143.14300 37.04      12       2
+   3  15                 m_ES_Vnonlocal_W   116.45300 30.13      16       3
+   4  16           evolve_WFs_in_subspace    34.51200  8.93       4       4
+   5  10            modified_gram_schmidt    25.59400  6.62       4       5
+   6  11                    betar_dot_Psi    20.42000  5.28      20       6
+   7   8               m_XC_cal_potential    20.05900  5.19       2       7
+   8  20                 prepare_Hloc_phi    13.44500  3.48      12       8
+   9  13             m_ES_WF_in_Rspace(1)    13.42600  3.47     288       9
+  10  22                    m_CD_softpart     3.16800  0.82       1      10
+ Total cputime of (   57 )-th iteration     386.45000 / 17279.897 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       58       9       2 ----
+ TOTAL ENERGY FOR    58 -TH ITER=  -4283.600960668212  edel =  -0.430837D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.086155847178 HA=   1516.381136081582 XC=   -517.955415153844 LO=  -2263.617933156878
+ NL=  -1022.553441276427 EW=  -2603.941463009823 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.4308D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   58) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   113.38500 43.33      16       1
+   2  10            modified_gram_schmidt    63.09100 24.11       4       2
+   3  16           evolve_WFs_in_subspace    31.54400 12.05       4       3
+   4  11                    betar_dot_Psi    21.07700  8.05      20       4
+   5   8               m_XC_cal_potential    20.15100  7.70       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.93200  3.41     192       6
+   7  22                    m_CD_softpart     3.21200  1.23       1       7
+   8  12              energy_eigen_values     1.93200  0.74       4       8
+   9  23                    m_CD_hardpart     0.75200  0.29       1       9
+  10  24           m_CD_convergence_check     0.00800  0.00       1      10
+ Total cputime of (   58 )-th iteration     261.67000 / 17541.567 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       59       9       3 ----
+ TOTAL ENERGY FOR    59 -TH ITER=  -4283.600960711741  edel =  -0.435293D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.086095167920 HA=   1516.380802731145 XC=   -517.955422062770 LO=  -2263.617536635217
+ NL=  -1022.553436902997 EW=  -2603.941463009823 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.4353D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.155783952067D-02 at the iteration_ionic of        9
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     9      59 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000633   -0.001905   -0.001905    0.002768
+ !forc    2      29    7.899585   14.219254   20.538922    0.001905    0.000633   -0.001905    0.002768
+ !forc    3      53   20.538922   14.219254    7.899585   -0.001905    0.000633    0.001905    0.002768
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000633    0.001905    0.001905    0.002768
+ !forc    5      21    7.899585   14.219254    7.899585    0.001905   -0.000633    0.001905    0.002767
+ !forc    6      47   20.538922    7.899585   14.219254   -0.001905    0.001905    0.000633    0.002767
+ !forc    7      51   14.219254   20.538922    7.899585    0.000633   -0.001905    0.001905    0.002767
+ !forc    8      31    7.899585   20.538922   14.219254    0.001905   -0.001905    0.000633    0.002767
+ !forc    9      43   14.219254    7.899585   20.538922    0.000633    0.001905   -0.001905    0.002767
+ !forc   10      15    7.899585    7.899585   14.219254    0.001905    0.001905   -0.000633    0.002767
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0015578395
+  ! iteration_ionic =           10
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260390431167D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   59) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   106.95400 33.55      16       1
+   2  10            modified_gram_schmidt    95.91300 30.09       8       2
+   3  16           evolve_WFs_in_subspace    32.25600 10.12       4       3
+   4   8               m_XC_cal_potential    29.99100  9.41       3       4
+   5  11                    betar_dot_Psi    25.22500  7.91      24       5
+   6  26         m_Force_term_drv_of_flmt    15.47000  4.85       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.58400  3.32     224       7
+   8  12              energy_eigen_values     3.78500  1.19       8       8
+   9  22                    m_CD_softpart     3.32300  1.04       1       9
+  10  14           m_ES_sort_eigen_values     0.71800  0.23       1      10
+ Total cputime of (   59 )-th iteration     318.80000 / 17860.367 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       60      10       1 ----
+ TOTAL ENERGY FOR    60 -TH ITER=  -4283.600971100244  edel =  -0.103885D-04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.086727866122 HA=   1516.417737611897 XC=   -517.955904776975 LO=  -2263.691844744370
+ NL=  -1022.553375386177 EW=  -2603.904311670740 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   60) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   170.68300 43.78      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   149.51500 38.35      12       2
+   3  15                 m_ES_Vnonlocal_W   118.32300 30.35      16       3
+   4  16           evolve_WFs_in_subspace    30.94500  7.94       4       4
+   5  10            modified_gram_schmidt    25.81400  6.62       4       5
+   6  11                    betar_dot_Psi    20.38500  5.23      20       6
+   7   8               m_XC_cal_potential    20.14600  5.17       2       7
+   8  13             m_ES_WF_in_Rspace(1)    12.51200  3.21     288       8
+   9  20                 prepare_Hloc_phi    12.02000  3.08      12       9
+  10  22                    m_CD_softpart     3.41400  0.88       1      10
+ Total cputime of (   60 )-th iteration     389.89200 / 18250.259 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       61      10       2 ----
+ TOTAL ENERGY FOR    61 -TH ITER=  -4283.600971148578  edel =  -0.483333D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.086757327909 HA=   1516.418022807276 XC=   -517.955795863992 LO=  -2263.692284585039
+ NL=  -1022.553359163992 EW=  -2603.904311670740 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.4833D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   61) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   116.31100 44.81      16       1
+   2  10            modified_gram_schmidt    55.58000 21.41       4       2
+   3  16           evolve_WFs_in_subspace    35.55600 13.70       4       3
+   4  11                    betar_dot_Psi    21.06900  8.12      20       4
+   5   8               m_XC_cal_potential    19.50200  7.51       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.49900  3.27     192       6
+   7  22                    m_CD_softpart     3.05500  1.18       1       7
+   8  12              energy_eigen_values     1.94100  0.75       4       8
+   9  23                    m_CD_hardpart     0.64500  0.25       1       9
+  10  24           m_CD_convergence_check     0.01000  0.00       1      10
+ Total cputime of (   61 )-th iteration     259.54800 / 18509.807 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       62      10       3 ----
+ TOTAL ENERGY FOR    62 -TH ITER=  -4283.600971203746  edel =  -0.551681D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.086689504000 HA=   1516.417632814592 XC=   -517.955802972518 LO=  -2263.691824782989
+ NL=  -1022.553354096090 EW=  -2603.904311670740 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5517D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.164027601436D-02 at the iteration_ionic of       10
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    10      62 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000626   -0.001894   -0.001894    0.002751
+ !forc    2      29    7.899585   14.219254   20.538922    0.001894    0.000626   -0.001894    0.002751
+ !forc    3      53   20.538922   14.219254    7.899585   -0.001894    0.000626    0.001894    0.002751
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000626    0.001894    0.001894    0.002751
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001894    0.001894    0.000626    0.002750
+ !forc    6      21    7.899585   14.219254    7.899585    0.001894   -0.000626    0.001894    0.002750
+ !forc    7      51   14.219254   20.538922    7.899585    0.000626   -0.001894    0.001894    0.002750
+ !forc    8      43   14.219254    7.899585   20.538922    0.000626    0.001894   -0.001894    0.002750
+ !forc    9      31    7.899585   20.538922   14.219254    0.001894   -0.001894    0.000626    0.002750
+ !forc   10      15    7.899585    7.899585   14.219254    0.001894    0.001894   -0.000626    0.002750
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0016402760
+  ! iteration_ionic =           11
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260386516351D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   62) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   122.67900 38.70      16       1
+   2  10            modified_gram_schmidt    79.45800 25.07       8       2
+   3  16           evolve_WFs_in_subspace    33.53200 10.58       4       3
+   4   8               m_XC_cal_potential    30.08900  9.49       3       4
+   5  11                    betar_dot_Psi    25.17300  7.94      24       5
+   6  26         m_Force_term_drv_of_flmt    15.48000  4.88       1       6
+   7  13             m_ES_WF_in_Rspace(1)     9.48300  2.99     224       7
+   8  12              energy_eigen_values     3.75100  1.18       8       8
+   9  22                    m_CD_softpart     3.28100  1.04       1       9
+  10  14           m_ES_sort_eigen_values     0.80300  0.25       1      10
+ Total cputime of (   62 )-th iteration     316.99700 / 18826.804 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       63      11       1 ----
+ TOTAL ENERGY FOR    63 -TH ITER=  -4283.600982647142  edel =  -0.114434D-04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.087351343046 HA=   1516.456431691096 XC=   -517.956308557829 LO=  -2263.770005951102
+ NL=  -1022.553287666004 EW=  -2603.865163506349 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   63) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   162.14700 41.97      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   140.27000 36.31      12       2
+   3  15                 m_ES_Vnonlocal_W   121.43400 31.43      16       3
+   4  16           evolve_WFs_in_subspace    31.87400  8.25       4       4
+   5  10            modified_gram_schmidt    25.90200  6.70       4       5
+   6  11                    betar_dot_Psi    21.11900  5.47      20       6
+   7   8               m_XC_cal_potential    20.33300  5.26       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.15700  3.41     288       8
+   9  20                 prepare_Hloc_phi    12.84600  3.32      12       9
+  10  22                    m_CD_softpart     3.20600  0.83       1      10
+ Total cputime of (   63 )-th iteration     386.35300 / 19213.157 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       64      11       2 ----
+ TOTAL ENERGY FOR    64 -TH ITER=  -4283.600982700231  edel =  -0.530890D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087383488149 HA=   1516.456778614431 XC=   -517.956193146567 LO=  -2263.770517389558
+ NL=  -1022.553270760336 EW=  -2603.865163506349 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5309D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   64) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   102.75100 39.32      16       1
+   2  10            modified_gram_schmidt    69.59600 26.63       4       2
+   3  16           evolve_WFs_in_subspace    33.81700 12.94       4       3
+   4  11                    betar_dot_Psi    21.26100  8.14      20       4
+   5   8               m_XC_cal_potential    20.06300  7.68       2       5
+   6  13             m_ES_WF_in_Rspace(1)     9.38100  3.59     192       6
+   7  22                    m_CD_softpart     3.35600  1.28       1       7
+   8  12              energy_eigen_values     2.01300  0.77       4       8
+   9  23                    m_CD_hardpart     0.75800  0.29       1       9
+  10  24           m_CD_convergence_check     0.00800  0.00       1      10
+ Total cputime of (   64 )-th iteration     261.31800 / 19474.475 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       65      11       3 ----
+ TOTAL ENERGY FOR    65 -TH ITER=  -4283.600982764690  edel =  -0.644595D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087311037431 HA=   1516.456353430045 XC=   -517.956201052119 LO=  -2263.770017183481
+ NL=  -1022.553265490216 EW=  -2603.865163506349 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       66      11       4 ----
+ TOTAL ENERGY FOR    66 -TH ITER=  -4283.600982788964  edel =  -0.242735D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087284759104 HA=   1516.455606387715 XC=   -517.956147328827 LO=  -2263.769306979427
+ NL=  -1022.553256121178 EW=  -2603.865163506349 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2427D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       67      11       5 ----
+ TOTAL ENERGY FOR    67 -TH ITER=  -4283.600982808048  edel =  -0.190839D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087216222201 HA=   1516.454712095649 XC=   -517.956109218380 LO=  -2263.768397174135
+ NL=  -1022.553241227033 EW=  -2603.865163506349 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1908D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.179658664426D-02 at the iteration_ionic of       11
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    11      67 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000627   -0.001884   -0.001884    0.002737
+ !forc    2      29    7.899585   14.219254   20.538922    0.001884    0.000627   -0.001884    0.002737
+ !forc    3      53   20.538922   14.219254    7.899585   -0.001884    0.000627    0.001884    0.002737
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000627    0.001884    0.001884    0.002737
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001884    0.001884    0.000627    0.002737
+ !forc    6      21    7.899585   14.219254    7.899585    0.001884   -0.000627    0.001884    0.002737
+ !forc    7      51   14.219254   20.538922    7.899585    0.000627   -0.001884    0.001884    0.002737
+ !forc    8      43   14.219254    7.899585   20.538922    0.000627    0.001884   -0.001884    0.002737
+ !forc    9      31    7.899585   20.538922   14.219254    0.001884   -0.001884    0.000626    0.002737
+ !forc   10      15    7.899585    7.899585   14.219254    0.001884    0.001884   -0.000626    0.002737
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0017965866
+  ! iteration_ionic =           12
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260382224774D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   67) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   110.07200 34.51      16       1
+   2  10            modified_gram_schmidt    93.12000 29.19       8       2
+   3  16           evolve_WFs_in_subspace    34.26600 10.74       4       3
+   4   8               m_XC_cal_potential    29.37000  9.21       3       4
+   5  11                    betar_dot_Psi    25.11900  7.87      24       5
+   6  26         m_Force_term_drv_of_flmt    15.48200  4.85       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.35500  3.25     224       7
+   8  12              energy_eigen_values     4.01500  1.26       8       8
+   9  22                    m_CD_softpart     3.18300  1.00       1       9
+  10  14           m_ES_sort_eigen_values     0.62400  0.20       1      10
+ Total cputime of (   67 )-th iteration     318.99500 / 20320.630 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       68      12       1 ----
+ TOTAL ENERGY FOR    68 -TH ITER=  -4283.600995644939  edel =  -0.128369D-04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.088044277276 HA=   1516.498996929524 XC=   -517.956765272006 LO=  -2263.855829052360
+ NL=  -1022.553194790231 EW=  -2603.822247737142 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   68) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   170.64900 43.30      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   148.31500 37.63      12       2
+   3  15                 m_ES_Vnonlocal_W   119.11400 30.22      16       3
+   4  16           evolve_WFs_in_subspace    33.06000  8.39       4       4
+   5  10            modified_gram_schmidt    25.02400  6.35       4       5
+   6  11                    betar_dot_Psi    21.05600  5.34      20       6
+   7   8               m_XC_cal_potential    20.80100  5.28       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.88000  3.52     288       8
+   9  20                 prepare_Hloc_phi    13.67600  3.47      12       9
+  10  22                    m_CD_softpart     3.12600  0.79       1      10
+ Total cputime of (   68 )-th iteration     394.14300 / 20714.773 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       69      12       2 ----
+ TOTAL ENERGY FOR    69 -TH ITER=  -4283.600995704721  edel =  -0.597820D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.088083018254 HA=   1516.499435031609 XC=   -517.956634649083 LO=  -2263.856454086921
+ NL=  -1022.553177281437 EW=  -2603.822247737142 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5978D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   69) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   117.60200 45.21      16       1
+   2  10            modified_gram_schmidt    59.02500 22.69       4       2
+   3  16           evolve_WFs_in_subspace    30.91600 11.88       4       3
+   4  11                    betar_dot_Psi    21.01400  8.08      20       4
+   5   8               m_XC_cal_potential    20.01700  7.69       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.31900  3.20     192       6
+   7  22                    m_CD_softpart     3.28700  1.26       1       7
+   8  12              energy_eigen_values     1.86100  0.72       4       8
+   9  23                    m_CD_hardpart     0.73900  0.28       1       9
+  10  24           m_CD_convergence_check     0.00700  0.00       1      10
+ Total cputime of (   69 )-th iteration     260.13700 / 20974.910 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       70      12       3 ----
+ TOTAL ENERGY FOR    70 -TH ITER=  -4283.600995789791  edel =  -0.850705D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087998470559 HA=   1516.498941632900 XC=   -517.956644083970 LO=  -2263.855873338803
+ NL=  -1022.553170733336 EW=  -2603.822247737142 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       71      12       4 ----
+ TOTAL ENERGY FOR    71 -TH ITER=  -4283.600995821493  edel =  -0.317013D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087968513051 HA=   1516.498089039839 XC=   -517.956583345224 LO=  -2263.855062170224
+ NL=  -1022.553160121793 EW=  -2603.822247737142 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.3170D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       72      12       5 ----
+ TOTAL ENERGY FOR    72 -TH ITER=  -4283.600995846958  edel =  -0.254649D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.087892104356 HA=   1516.497064922159 XC=   -517.956540570687 LO=  -2263.854021187930
+ NL=  -1022.553143377713 EW=  -2603.822247737142 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2546D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.183388956312D-02 at the iteration_ionic of       12
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    12      72 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000619   -0.001871   -0.001871    0.002718
+ !forc    2      53   20.538922   14.219254    7.899585   -0.001871    0.000619    0.001871    0.002718
+ !forc    3      29    7.899585   14.219254   20.538922    0.001871    0.000619   -0.001871    0.002718
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000619    0.001871    0.001871    0.002718
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001871    0.001871    0.000619    0.002718
+ !forc    6      21    7.899585   14.219254    7.899585    0.001871   -0.000619    0.001871    0.002718
+ !forc    7      51   14.219254   20.538922    7.899585    0.000619   -0.001871    0.001871    0.002717
+ !forc    8      43   14.219254    7.899585   20.538922    0.000619    0.001871   -0.001871    0.002717
+ !forc    9      31    7.899585   20.538922   14.219254    0.001871   -0.001871    0.000619    0.002717
+ !forc   10      15    7.899585    7.899585   14.219254    0.001871    0.001871   -0.000619    0.002717
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0018338896
+  ! iteration_ionic =           13
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260377840123D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   72) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   108.43100 35.78      16       1
+   2  10            modified_gram_schmidt    79.61600 26.27       8       2
+   3  16           evolve_WFs_in_subspace    33.82000 11.16       4       3
+   4   8               m_XC_cal_potential    28.66300  9.46       3       4
+   5  11                    betar_dot_Psi    24.54000  8.10      24       5
+   6  26         m_Force_term_drv_of_flmt    15.45700  5.10       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.77900  3.56     224       7
+   8  12              energy_eigen_values     4.23600  1.40       8       8
+   9  22                    m_CD_softpart     3.30900  1.09       1       9
+  10  23                    m_CD_hardpart     0.73900  0.24       1      10
+ Total cputime of (   72 )-th iteration     303.06600 / 21787.103 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       73      13       1 ----
+ TOTAL ENERGY FOR    73 -TH ITER=  -4283.601009117696  edel =  -0.132707D-04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.088665850851 HA=   1516.541140604721 XC=   -517.957153998361 LO=  -2263.942182183923
+ NL=  -1022.553078157174 EW=  -2603.778401233810 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   73) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   148.13200 39.84      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   125.57500 33.77      12       2
+   3  15                 m_ES_Vnonlocal_W   121.60100 32.70      16       3
+   4  16           evolve_WFs_in_subspace    32.78100  8.82       4       4
+   5  10            modified_gram_schmidt    24.16300  6.50       4       5
+   6  11                    betar_dot_Psi    20.86600  5.61      20       6
+   7   8               m_XC_cal_potential    19.65900  5.29       2       7
+   8  13             m_ES_WF_in_Rspace(1)    14.21100  3.82     288       8
+   9  20                 prepare_Hloc_phi    13.59300  3.66      12       9
+  10  22                    m_CD_softpart     3.09700  0.83       1      10
+ Total cputime of (   73 )-th iteration     371.86100 / 22158.963 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       74      13       2 ----
+ TOTAL ENERGY FOR    74 -TH ITER=  -4283.601009202626  edel =  -0.849304D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.088727793058 HA=   1516.542023924692 XC=   -517.957044675052 LO=  -2263.943251272798
+ NL=  -1022.553063738716 EW=  -2603.778401233810 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   74) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   115.12200 44.88      16       1
+   2  10            modified_gram_schmidt    52.80700 20.59       4       2
+   3  16           evolve_WFs_in_subspace    34.20100 13.33       4       3
+   4   8               m_XC_cal_potential    21.48100  8.37       2       4
+   5  11                    betar_dot_Psi    20.48300  7.99      20       5
+   6  13             m_ES_WF_in_Rspace(1)     9.02800  3.52     192       6
+   7  22                    m_CD_softpart     3.26200  1.27       1       7
+   8  12              energy_eigen_values     2.10600  0.82       4       8
+   9  23                    m_CD_hardpart     0.73800  0.29       1       9
+  10  24           m_CD_convergence_check     0.00700  0.00       1      10
+ Total cputime of (   74 )-th iteration     256.49400 / 22415.457 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       75      13       3 ----
+ TOTAL ENERGY FOR    75 -TH ITER=  -4283.601009265495  edel =  -0.628688D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.088657220136 HA=   1516.541731290685 XC=   -517.957061596480 LO=  -2263.942874032474
+ NL=  -1022.553060913552 EW=  -2603.778401233810 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.6287D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       76      13       4 ----
+ TOTAL ENERGY FOR    76 -TH ITER=  -4283.601009284598  edel =  -0.191030D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.088636777270 HA=   1516.541049638929 XC=   -517.957010715166 LO=  -2263.942230526982
+ NL=  -1022.553053224840 EW=  -2603.778401233810 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1910D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.184020471294D-02 at the iteration_ionic of       13
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    13      76 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      58   14.219254   20.538922   20.538922   -0.000616   -0.001857   -0.001857    0.002698
+ !forc    2      53   20.538922   14.219254    7.899585   -0.001857    0.000616    0.001857    0.002698
+ !forc    3      29    7.899585   14.219254   20.538922    0.001857    0.000616   -0.001857    0.002698
+ !forc    4      35   14.219254    7.899585    7.899585   -0.000616    0.001857    0.001857    0.002698
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001857    0.001857    0.000616    0.002697
+ !forc    6      21    7.899585   14.219254    7.899585    0.001857   -0.000616    0.001857    0.002697
+ !forc    7      51   14.219254   20.538922    7.899585    0.000616   -0.001857    0.001857    0.002697
+ !forc    8      43   14.219254    7.899585   20.538922    0.000616    0.001857   -0.001857    0.002697
+ !forc    9      31    7.899585   20.538922   14.219254    0.001857   -0.001857    0.000616    0.002697
+ !forc   10      15    7.899585    7.899585   14.219254    0.001857    0.001857   -0.000616    0.002697
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0018402047
+  ! iteration_ionic =           14
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260373436875D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   76) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   114.42700 37.15      16       1
+   2  10            modified_gram_schmidt    79.32700 25.75       8       2
+   3  16           evolve_WFs_in_subspace    33.97900 11.03       4       3
+   4   8               m_XC_cal_potential    28.85800  9.37       3       4
+   5  11                    betar_dot_Psi    24.53400  7.96      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46100  5.02       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.07600  3.27     224       7
+   8  12              energy_eigen_values     3.90000  1.27       8       8
+   9  22                    m_CD_softpart     3.15900  1.03       1       9
+  10  23                    m_CD_hardpart     0.61100  0.20       1      10
+ Total cputime of (   76 )-th iteration     308.03400 / 22984.349 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       77      14       1 ----
+ TOTAL ENERGY FOR    77 -TH ITER=  -4283.601022481265  edel =  -0.131967D-04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.089357353317 HA=   1516.584563171521 XC=   -517.957596372112 LO=  -2264.029999982446
+ NL=  -1022.552977905962 EW=  -2603.734368745583 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   77) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   159.17600 41.56      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   136.86700 35.74      12       2
+   3  15                 m_ES_Vnonlocal_W   120.96900 31.59      16       3
+   4  16           evolve_WFs_in_subspace    31.83100  8.31       4       4
+   5  10            modified_gram_schmidt    25.88100  6.76       4       5
+   6  11                    betar_dot_Psi    20.90100  5.46      20       6
+   7   8               m_XC_cal_potential    20.40800  5.33       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.63700  3.56     288       8
+   9  20                 prepare_Hloc_phi    13.14000  3.43      12       9
+  10  22                    m_CD_softpart     3.20200  0.84       1      10
+ Total cputime of (   77 )-th iteration     382.99300 / 23367.342 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       78      14       2 ----
+ TOTAL ENERGY FOR    78 -TH ITER=  -4283.601022569266  edel =  -0.880009D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.089424292154 HA=   1516.585497692814 XC=   -517.957487647141 LO=  -2264.031123846670
+ NL=  -1022.552964314840 EW=  -2603.734368745583 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   78) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   108.66900 42.57      16       1
+   2  10            modified_gram_schmidt    61.18200 23.97       4       2
+   3  16           evolve_WFs_in_subspace    32.81400 12.85       4       3
+   4  11                    betar_dot_Psi    20.56800  8.06      20       4
+   5   8               m_XC_cal_potential    20.11300  7.88       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.86200  3.47     192       6
+   7  22                    m_CD_softpart     3.18700  1.25       1       7
+   8  12              energy_eigen_values     2.10300  0.82       4       8
+   9  23                    m_CD_hardpart     0.65500  0.26       1       9
+  10  24           m_CD_convergence_check     0.00700  0.00       1      10
+ Total cputime of (   78 )-th iteration     255.28900 / 23622.631 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       79      14       3 ----
+ TOTAL ENERGY FOR    79 -TH ITER=  -4283.601022635577  edel =  -0.663113D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.089348548261 HA=   1516.585171320638 XC=   -517.957502486543 LO=  -2264.030710621213
+ NL=  -1022.552960651137 EW=  -2603.734368745583 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       80      14       4 ----
+ TOTAL ENERGY FOR    80 -TH ITER=  -4283.601022655293  edel =  -0.197151D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.089328869230 HA=   1516.584491561395 XC=   -517.957452476576 LO=  -2264.030069022406
+ NL=  -1022.552952841352 EW=  -2603.734368745583 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1972D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       81      14       5 ----
+ TOTAL ENERGY FOR    81 -TH ITER=  -4283.601022671288  edel =  -0.159953D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.089268350804 HA=   1516.583637792573 XC=   -517.957415286001 LO=  -2264.029204807609
+ NL=  -1022.552939975471 EW=  -2603.734368745583 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1600D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.179909730050D-02 at the iteration_ionic of       14
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    14      81 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      53   20.538922   14.219254    7.899585   -0.001846    0.000604    0.001846    0.002679
+ !forc    2      58   14.219254   20.538922   20.538922   -0.000604   -0.001846   -0.001846    0.002679
+ !forc    3      35   14.219254    7.899585    7.899585   -0.000604    0.001846    0.001846    0.002679
+ !forc    4      29    7.899585   14.219254   20.538922    0.001846    0.000604   -0.001846    0.002679
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001845    0.001845    0.000604    0.002679
+ !forc    6      21    7.899585   14.219254    7.899585    0.001845   -0.000604    0.001845    0.002678
+ !forc    7      51   14.219254   20.538922    7.899585    0.000603   -0.001845    0.001845    0.002678
+ !forc    8      43   14.219254    7.899585   20.538922    0.000603    0.001845   -0.001845    0.002678
+ !forc    9      31    7.899585   20.538922   14.219254    0.001845   -0.001845    0.000603    0.002678
+ !forc   10      15    7.899585    7.899585   14.219254    0.001845    0.001845   -0.000603    0.002678
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0798868249
+the estimated force seems to be very large;  update will be done by the steepest-descent method
+  ! iteration_ionic =           15
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260369129483D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   81) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   108.77500 35.44      16       1
+   2  10            modified_gram_schmidt    83.36800 27.17       8       2
+   3  16           evolve_WFs_in_subspace    33.12100 10.79       4       3
+   4   8               m_XC_cal_potential    29.84000  9.72       3       4
+   5  11                    betar_dot_Psi    24.51700  7.99      24       5
+   6  26         m_Force_term_drv_of_flmt    15.49600  5.05       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.17000  3.31     224       7
+   8  12              energy_eigen_values     3.79800  1.24       8       8
+   9  22                    m_CD_softpart     3.27400  1.07       1       9
+  10  23                    m_CD_hardpart     0.74800  0.24       1      10
+ Total cputime of (   81 )-th iteration     306.89000 / 24441.131 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       82      15       1 ----
+ TOTAL ENERGY FOR    82 -TH ITER=  -4283.601035185071  edel =  -0.125138D-04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.090030221419 HA=   1516.627040007012 XC=   -517.958023247372 LO=  -2264.115909203128
+ NL=  -1022.552878131995 EW=  -2603.691294831006 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   82) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   151.34100 40.52      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   129.22200 34.60      12       2
+   3  15                 m_ES_Vnonlocal_W   119.14800 31.90      16       3
+   4  16           evolve_WFs_in_subspace    31.03500  8.31       4       4
+   5  10            modified_gram_schmidt    25.71000  6.88       4       5
+   6  11                    betar_dot_Psi    20.85300  5.58      20       6
+   7   8               m_XC_cal_potential    20.36500  5.45       2       7
+   8  20                 prepare_Hloc_phi    14.31000  3.83      12       8
+   9  13             m_ES_WF_in_Rspace(1)    13.96600  3.74     288       9
+  10  22                    m_CD_softpart     3.51700  0.94       1      10
+ Total cputime of (   82 )-th iteration     373.46300 / 24814.594 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       83      15       2 ----
+ TOTAL ENERGY FOR    83 -TH ITER=  -4283.601035270363  edel =  -0.852924D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.090091305171 HA=   1516.627892840456 XC=   -517.957915332854 LO=  -2264.116945078474
+ NL=  -1022.552864173657 EW=  -2603.691294831006 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   83) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   113.96900 44.92      16       1
+   2  10            modified_gram_schmidt    51.52500 20.31       4       2
+   3  16           evolve_WFs_in_subspace    35.26000 13.90       4       3
+   4  11                    betar_dot_Psi    20.48900  8.08      20       4
+   5   8               m_XC_cal_potential    20.02800  7.89       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.85700  3.49     192       6
+   7  22                    m_CD_softpart     3.34000  1.32       1       7
+   8  12              energy_eigen_values     1.95500  0.77       4       8
+   9  23                    m_CD_hardpart     0.72800  0.29       1       9
+  10  24           m_CD_convergence_check     0.01000  0.00       1      10
+ Total cputime of (   83 )-th iteration     253.70900 / 25068.304 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       84      15       3 ----
+ TOTAL ENERGY FOR    84 -TH ITER=  -4283.601035330155  edel =  -0.597920D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.090022010145 HA=   1516.627608881817 XC=   -517.957931563000 LO=  -2264.116578606545
+ NL=  -1022.552861221566 EW=  -2603.691294831006 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5979D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       85      15       4 ----
+ TOTAL ENERGY FOR    85 -TH ITER=  -4283.601035349063  edel =  -0.189075D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.090001022136 HA=   1516.626937679071 XC=   -517.957881389285 LO=  -2264.115944323602
+ NL=  -1022.552853506378 EW=  -2603.691294831006 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1891D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.173641292917D-02 at the iteration_ionic of       15
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    15      85 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      53   20.538922   14.219254    7.899585   -0.001831    0.000600    0.001832    0.002659
+ !forc    2      58   14.219254   20.538922   20.538922   -0.000600   -0.001831   -0.001832    0.002659
+ !forc    3      35   14.219254    7.899585    7.899585   -0.000600    0.001831    0.001831    0.002659
+ !forc    4      29    7.899585   14.219254   20.538922    0.001831    0.000600   -0.001831    0.002659
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001831    0.001831    0.000600    0.002658
+ !forc    6      21    7.899585   14.219254    7.899585    0.001831   -0.000600    0.001831    0.002658
+ !forc    7      43   14.219254    7.899585   20.538922    0.000600    0.001831   -0.001831    0.002658
+ !forc    8      51   14.219254   20.538922    7.899585    0.000600   -0.001831    0.001831    0.002658
+ !forc    9      60   20.538922   14.219254   20.538922   -0.001831   -0.000600   -0.001831    0.002658
+ !forc   10      15    7.899585    7.899585   14.219254    0.001831    0.001831   -0.000600    0.002658
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0495761292
+  ! iteration_ionic =           16
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260249195410D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   85) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   113.74000 37.06      16       1
+   2  10            modified_gram_schmidt    77.01000 25.09       8       2
+   3  16           evolve_WFs_in_subspace    35.17100 11.46       4       3
+   4   8               m_XC_cal_potential    28.99900  9.45       3       4
+   5  11                    betar_dot_Psi    24.78100  8.07      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46100  5.04       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.38200  3.38     224       7
+   8  12              energy_eigen_values     4.00400  1.30       8       8
+   9  22                    m_CD_softpart     3.14000  1.02       1       9
+  10  23                    m_CD_hardpart     0.63100  0.21       1      10
+ Total cputime of (   85 )-th iteration     306.93100 / 25629.553 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       86      16       1 ----
+ TOTAL ENERGY FOR    86 -TH ITER=  -4283.588262895275  edel =   0.127725D-01 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.089055898528 HA=   1517.514265713040 XC=   -517.981648123838 LO=  -2266.175697471531
+ NL=  -1022.542284809062 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   86) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   154.79400 40.55      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   133.15300 34.88      12       2
+   3  15                 m_ES_Vnonlocal_W   119.81900 31.39      16       3
+   4  16           evolve_WFs_in_subspace    37.68900  9.87       4       4
+   5  10            modified_gram_schmidt    25.52900  6.69       4       5
+   6  11                    betar_dot_Psi    20.63900  5.41      20       6
+   7   8               m_XC_cal_potential    19.40700  5.08       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.53400  3.55     288       8
+   9  20                 prepare_Hloc_phi    13.26400  3.47      12       9
+  10  22                    m_CD_softpart     3.12100  0.82       1      10
+ Total cputime of (   86 )-th iteration     381.72200 / 26011.275 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       87      16       2 ----
+ TOTAL ENERGY FOR    87 -TH ITER=  -4283.590451911308  edel =  -0.218902D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.137260231800 HA=   1518.048544765728 XC=   -517.963671655905 LO=  -2266.774678375057
+ NL=  -1022.545952775461 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   87) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   111.48300 44.01      16       1
+   2  10            modified_gram_schmidt    55.99400 22.10       4       2
+   3  16           evolve_WFs_in_subspace    33.65800 13.29       4       3
+   4  11                    betar_dot_Psi    20.49500  8.09      20       4
+   5   8               m_XC_cal_potential    19.27600  7.61       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.72300  3.44     192       6
+   7  22                    m_CD_softpart     3.29500  1.30       1       7
+   8  12              energy_eigen_values     1.95800  0.77       4       8
+   9  23                    m_CD_hardpart     0.63800  0.25       1       9
+  10  24           m_CD_convergence_check     0.01400  0.01       1      10
+ Total cputime of (   87 )-th iteration     253.31400 / 26264.590 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       88      16       3 ----
+ TOTAL ENERGY FOR    88 -TH ITER=  -4283.600049407243  edel =  -0.959750D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.112868182803 HA=   1518.013947689875 XC=   -517.979568304350 LO=  -2266.701587528980
+ NL=  -1022.553755344180 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       89      16       4 ----
+ TOTAL ENERGY FOR    89 -TH ITER=  -4283.600539431864  edel =  -0.490025D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.110462982533 HA=   1517.883610047653 XC=   -517.970785302359 LO=  -2266.581881902929
+ NL=  -1022.549991154350 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       90      16       5 ----
+ TOTAL ENERGY FOR    90 -TH ITER=  -4283.600688151875  edel =  -0.148720D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.108476429322 HA=   1517.820296285534 XC=   -517.969235536540 LO=  -2266.518242573566
+ NL=  -1022.550028654213 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       91      16       6 ----
+ TOTAL ENERGY FOR    91 -TH ITER=  -4283.600693636670  edel =  -0.548480D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.108006658497 HA=   1517.797472656543 XC=   -517.968733877557 LO=  -2266.495293492058
+ NL=  -1022.550191479684 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       92      16       7 ----
+ TOTAL ENERGY FOR    92 -TH ITER=  -4283.600695721019  edel =  -0.208435D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.108708508083 HA=   1517.817087947345 XC=   -517.969454608328 LO=  -2266.514905778986
+ NL=  -1022.550177686722 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       93      16       8 ----
+ TOTAL ENERGY FOR    93 -TH ITER=  -4283.600696650913  edel =  -0.929894D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.108493025112 HA=   1517.809728898202 XC=   -517.969136929897 LO=  -2266.507678810892
+ NL=  -1022.550148731026 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       94      16       9 ----
+ TOTAL ENERGY FOR    94 -TH ITER=  -4283.600696702002  edel =  -0.510890D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.108394287554 HA=   1517.807969893266 XC=   -517.969100629768 LO=  -2266.505874134154
+ NL=  -1022.550132016487 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5109D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =       95      16      10 ----
+ TOTAL ENERGY FOR    95 -TH ITER=  -4283.600696727016  edel =  -0.250138D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.108441769904 HA=   1517.808936604654 XC=   -517.969104919970 LO=  -2266.506890780979
+ NL=  -1022.550125298212 EW=  -2602.491954102412 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.2501D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.534056692087D-02 at the iteration_ionic of       16
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    16      95 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      28   11.104610   17.333894   17.333813    0.003085   -0.003085   -0.003079    0.005341
+ !forc    2       2   11.104593   11.104647   11.104682    0.003086    0.003083    0.003080    0.005340
+ !forc    3      56   17.333854   17.333928   11.104695   -0.003082   -0.003087    0.003079    0.005340
+ !forc    4      46   17.333861   11.104669   17.333889   -0.003083    0.003081   -0.003085    0.005339
+ !forc    5      53   20.538922   14.219254    7.899585   -0.001484    0.000381    0.001484    0.002133
+ !forc    6      35   14.219254    7.899585    7.899585   -0.000380    0.001484    0.001484    0.002132
+ !forc    7      47   20.538922    7.899585   14.219254   -0.001483    0.001483    0.000380    0.002131
+ !forc    8      58   14.219254   20.538922   20.538922   -0.000380   -0.001483   -0.001483    0.002131
+ !forc    9      29    7.899585   14.219254   20.538922    0.001483    0.000380   -0.001483    0.002131
+ !forc   10      43   14.219254    7.899585   20.538922    0.000379    0.001482   -0.001482    0.002130
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0374146740
+  ! iteration_ionic =           17
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260339933910D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   95) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   111.05800 36.23      16       1
+   2  10            modified_gram_schmidt    82.66200 26.97       8       2
+   3  16           evolve_WFs_in_subspace    31.47200 10.27       4       3
+   4   8               m_XC_cal_potential    29.58600  9.65       3       4
+   5  11                    betar_dot_Psi    24.92200  8.13      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46400  5.05       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.40900  3.40     224       7
+   8  12              energy_eigen_values     3.99100  1.30       8       8
+   9  22                    m_CD_softpart     3.06500  1.00       1       9
+  10  23                    m_CD_hardpart     0.62300  0.20       1      10
+ Total cputime of (   95 )-th iteration     306.49600 / 28351.007 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       96      17       1 ----
+ TOTAL ENERGY FOR    96 -TH ITER=  -4283.594077904939  edel =   0.661882D-02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.079934279943 HA=   1516.596335673907 XC=   -517.961884013541 LO=  -2264.362077235188
+ NL=  -1022.547047512964 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   96) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   148.02000 39.05      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   128.33200 33.86      12       2
+   3  15                 m_ES_Vnonlocal_W   127.00600 33.51      16       3
+   4  16           evolve_WFs_in_subspace    31.67400  8.36       4       4
+   5  10            modified_gram_schmidt    26.10500  6.89       4       5
+   6  11                    betar_dot_Psi    20.57300  5.43      20       6
+   7   8               m_XC_cal_potential    20.05300  5.29       2       7
+   8  20                 prepare_Hloc_phi    14.27900  3.77      12       8
+   9  13             m_ES_WF_in_Rspace(1)    13.35500  3.52     288       9
+  10  22                    m_CD_softpart     3.15900  0.83       1      10
+ Total cputime of (   96 )-th iteration     379.05900 / 28730.066 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       97      17       2 ----
+ TOTAL ENERGY FOR    97 -TH ITER=  -4283.595771486242  edel =  -0.169358D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.108857498675 HA=   1517.063520555603 XC=   -517.956262866435 LO=  -2264.863792528382
+ NL=  -1022.548755048605 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   97) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   112.28700 43.55      16       1
+   2  10            modified_gram_schmidt    61.85800 23.99       4       2
+   3  16           evolve_WFs_in_subspace    31.67800 12.29       4       3
+   4  11                    betar_dot_Psi    20.55800  7.97      20       4
+   5   8               m_XC_cal_potential    19.79300  7.68       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.58500  3.33     192       6
+   7  22                    m_CD_softpart     3.13400  1.22       1       7
+   8  12              energy_eigen_values     1.89200  0.73       4       8
+   9  23                    m_CD_hardpart     0.63700  0.25       1       9
+  10  24           m_CD_convergence_check     0.00900  0.00       1      10
+ Total cputime of (   97 )-th iteration     257.83200 / 28987.898 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       98      17       3 ----
+ TOTAL ENERGY FOR    98 -TH ITER=  -4283.600807230087  edel =  -0.503574D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.095863504218 HA=   1517.012388804124 XC=   -517.964357258077 LO=  -2264.791465626373
+ NL=  -1022.553897556882 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   98) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   109.04500 39.78      16       1
+   2  10            modified_gram_schmidt    65.11500 23.75       4       2
+   3  16           evolve_WFs_in_subspace    35.11700 12.81       4       3
+   4  11                    betar_dot_Psi    20.65000  7.53      20       4
+   5   8               m_XC_cal_potential    19.62400  7.16       2       5
+   6  13             m_ES_WF_in_Rspace(1)     8.82800  3.22     192       6
+   7  22                    m_CD_softpart     3.17300  1.16       1       7
+   8  12              energy_eigen_values     1.79600  0.66       4       8
+   9  23                    m_CD_hardpart     0.71100  0.26       1       9
+  10  24           m_CD_convergence_check     0.00800  0.00       1      10
+ Total cputime of (   98 )-th iteration     274.11800 / 29262.016 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       99      17       4 ----
+ TOTAL ENERGY FOR    99 -TH ITER=  -4283.601035244978  edel =  -0.228015D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.093611937218 HA=   1516.935187442636 XC=   -517.960291438699 LO=  -2264.718509248430
+ NL=  -1022.551694840607 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   99) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   109.23500 43.19      16       1
+   2  10            modified_gram_schmidt    58.75100 23.23       4       2
+   3  16           evolve_WFs_in_subspace    31.33100 12.39       4       3
+   4  11                    betar_dot_Psi    20.68000  8.18      20       4
+   5   8               m_XC_cal_potential    19.91300  7.87       2       5
+   6  13             m_ES_WF_in_Rspace(1)     9.25400  3.66     192       6
+   7  22                    m_CD_softpart     3.30700  1.31       1       7
+   8  12              energy_eigen_values     1.92200  0.76       4       8
+   9  23                    m_CD_hardpart     0.74400  0.29       1       9
+  10  24           m_CD_convergence_check     0.00700  0.00       1      10
+ Total cputime of (   99 )-th iteration     252.94500 / 29514.961 (sec.)
+ ---- iteration(total, ionic, elelctronic) =      100      17       5 ----
+ TOTAL ENERGY FOR   100 -TH ITER=  -4283.601089863017  edel =  -0.546180D-04 : SOLVER = SUBMAT + RMM3
+ KI=    608.093160984220 HA=   1516.897944310664 XC=   -517.959544886704 LO=  -2264.681625167833
+ NL=  -1022.551686006267 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =      101      17       6 ----
+ TOTAL ENERGY FOR   101 -TH ITER=  -4283.601089935455  edel =  -0.724376D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.093407675053 HA=   1516.895264468777 XC=   -517.959960647233 LO=  -2264.678514107300
+ NL=  -1022.551948227656 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =      102      17       7 ----
+ TOTAL ENERGY FOR   102 -TH ITER=  -4283.601093874215  edel =  -0.393876D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.094420016270 HA=   1516.915449213466 XC=   -517.960744238131 LO=  -2264.698793152839
+ NL=  -1022.552086615885 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =      103      17       8 ----
+ TOTAL ENERGY FOR   103 -TH ITER=  -4283.601094151811  edel =  -0.277596D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.094434056700 HA=   1516.913252814144 XC=   -517.960699890471 LO=  -2264.696618046595
+ NL=  -1022.552123988492 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =      104      17       9 ----
+ TOTAL ENERGY FOR   104 -TH ITER=  -4283.601094140517  edel =   0.112941D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.094383695100 HA=   1516.911931265676 XC=   -517.960667469796 LO=  -2264.695262035569
+ NL=  -1022.552140498830 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =   0.1129D-07 edelta =   0.1000D-08 ntcnvg =       1
+ ---- iteration(total, ionic, elelctronic) =      105      17      10 ----
+ TOTAL ENERGY FOR   105 -TH ITER=  -4283.601094194713  edel =  -0.541968D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.094472534415 HA=   1516.913563079605 XC=   -517.960719383932 LO=  -2264.696906434250
+ NL=  -1022.552164893455 EW=  -2603.399339097096 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5420D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.490818916567D-03 at the iteration_ionic of       17
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    17     105 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      53   20.538922   14.219254    7.899585   -0.001749    0.000541    0.001749    0.002532
+ !forc    2      35   14.219254    7.899585    7.899585   -0.000541    0.001749    0.001749    0.002532
+ !forc    3      58   14.219254   20.538922   20.538922   -0.000541   -0.001749   -0.001749    0.002531
+ !forc    4      29    7.899585   14.219254   20.538922    0.001748    0.000541   -0.001749    0.002531
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001748    0.001748    0.000541    0.002531
+ !forc    6      21    7.899585   14.219254    7.899585    0.001748   -0.000541    0.001748    0.002531
+ !forc    7      43   14.219254    7.899585   20.538922    0.000541    0.001748   -0.001748    0.002531
+ !forc    8      51   14.219254   20.538922    7.899585    0.000541   -0.001748    0.001748    0.002530
+ !forc    9      60   20.538922   14.219254   20.538922   -0.001748   -0.000540   -0.001748    0.002530
+ !forc   10      15    7.899585    7.899585   14.219254    0.001748    0.001748   -0.000540    0.002530
+ F_ENF      = ./nfefn.data , newly opened  
+max. optimal force obtained from the BFGS update :         0.0031412773
+  ! iteration_ionic =           18
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260332371919D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (  105) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   110.77700 35.99      16       1
+   2  10            modified_gram_schmidt    81.37800 26.44       8       2
+   3  16           evolve_WFs_in_subspace    33.54400 10.90       4       3
+   4   8               m_XC_cal_potential    29.75200  9.67       3       4
+   5  11                    betar_dot_Psi    24.70700  8.03      24       5
+   6  26         m_Force_term_drv_of_flmt    15.46500  5.02       1       6
+   7  13             m_ES_WF_in_Rspace(1)    10.90100  3.54     224       7
+   8  12              energy_eigen_values     4.01200  1.30       8       8
+   9  22                    m_CD_softpart     3.10900  1.01       1       9
+  10  23                    m_CD_hardpart     0.63700  0.21       1      10
+ Total cputime of (  105 )-th iteration     307.82200 / 31086.621 (sec.)
+ ---- iteration(total, ionic, elelctronic) =      106      18       1 ----
+ TOTAL ENERGY FOR   106 -TH ITER=  -4283.601096478284  edel =  -0.228357D-05 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.095811232331 HA=   1516.989190130255 XC=   -517.961783443644 LO=  -2264.848531100833
+ NL=  -1022.552064107978 EW=  -2603.323719188415 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (  106) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector   154.17000 41.05      12       1
+   2  19       m_ES_orthogonal_phi_to_WFs   131.82200 35.10      12       2
+   3  15                 m_ES_Vnonlocal_W   119.61400 31.85      16       3
+   4  16           evolve_WFs_in_subspace    31.46400  8.38       4       4
+   5  10            modified_gram_schmidt    25.58300  6.81       4       5
+   6  11                    betar_dot_Psi    21.26400  5.66      20       6
+   7   8               m_XC_cal_potential    19.85700  5.29       2       7
+   8  13             m_ES_WF_in_Rspace(1)    13.70900  3.65     288       8
+   9  20                 prepare_Hloc_phi    13.15700  3.50      12       9
+  10  22                    m_CD_softpart     3.23300  0.86       1      10
+ Total cputime of (  106 )-th iteration     375.56000 / 31462.181 (sec.)
+ ---- iteration(total, ionic, elelctronic) =      107      18       2 ----
+ TOTAL ENERGY FOR   107 -TH ITER=  -4283.601096806497  edel =  -0.328213D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.095973335948 HA=   1516.992403792348 XC=   -517.961591556422 LO=  -2264.852114821476
+ NL=  -1022.552048368479 EW=  -2603.323719188415 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (  107) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   112.61700 43.82      16       1
+   2  10            modified_gram_schmidt    57.02400 22.19       4       2
+   3  16           evolve_WFs_in_subspace    34.87900 13.57       4       3
+   4  11                    betar_dot_Psi    20.55800  8.00      20       4
+   5   8               m_XC_cal_potential    19.05000  7.41       2       5
+   6  13             m_ES_WF_in_Rspace(1)     9.05800  3.52     192       6
+   7  22                    m_CD_softpart     3.15900  1.23       1       7
+   8  12              energy_eigen_values     1.97500  0.77       4       8
+   9  23                    m_CD_hardpart     0.69300  0.27       1       9
+  10  24           m_CD_convergence_check     0.01000  0.00       1      10
+ Total cputime of (  107 )-th iteration     257.02200 / 31719.203 (sec.)
+ ---- iteration(total, ionic, elelctronic) =      108      18       3 ----
+ TOTAL ENERGY FOR   108 -TH ITER=  -4283.601097204183  edel =  -0.397687D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.095813334421 HA=   1516.991530081352 XC=   -517.961627973226 LO=  -2264.851050152959
+ NL=  -1022.552043305356 EW=  -2603.323719188415 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =      109      18       4 ----
+ TOTAL ENERGY FOR   109 -TH ITER=  -4283.601097275941  edel =  -0.717582D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.095768773350 HA=   1516.990125707495 XC=   -517.961534457714 LO=  -2264.849711433756
+ NL=  -1022.552026676901 EW=  -2603.323719188415 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =      110      18       5 ----
+ TOTAL ENERGY FOR   110 -TH ITER=  -4283.601097323184  edel =  -0.472428D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.095674226378 HA=   1516.988488829403 XC=   -517.961468753139 LO=  -2264.848063908181
+ NL=  -1022.552008529230 EW=  -2603.323719188415 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.4724D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (  110) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   111.99600 42.80      16       1
+   2  10            modified_gram_schmidt    62.34500 23.83       4       2
+   3  16           evolve_WFs_in_subspace    34.37200 13.14       4       3
+   4  11                    betar_dot_Psi    20.11400  7.69      20       4
+   5   8               m_XC_cal_potential    19.86400  7.59       2       5
+   6  13             m_ES_WF_in_Rspace(1)     9.11700  3.48     192       6
+   7  22                    m_CD_softpart     3.17500  1.21       1       7
+   8  12              energy_eigen_values     1.98000  0.76       4       8
+   9  23                    m_CD_hardpart     0.65100  0.25       1       9
+  10  24           m_CD_convergence_check     0.00800  0.00       1      10
+ Total cputime of (  110 )-th iteration     261.64300 / 32489.563 (sec.)
+ ---- iteration(total, ionic, elelctronic) =      111      18       6 ----
+ TOTAL ENERGY FOR   111 -TH ITER=  -4283.601097326405  edel =  -0.322052D-08 : SOLVER = SUBMAT + RMM3
+ KI=    608.095670750013 HA=   1516.988408907985 XC=   -517.961467095783 LO=  -2264.847985441526
+ NL=  -1022.552005258678 EW=  -2603.323719188415 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.3221D-08 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.167124754575D-05 at the iteration_ionic of       18
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =    18     111 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      53   20.538922   14.219254    7.899585   -0.001726    0.000531    0.001726    0.002498
+ !forc    2      35   14.219254    7.899585    7.899585   -0.000531    0.001726    0.001726    0.002498
+ !forc    3      58   14.219254   20.538922   20.538922   -0.000531   -0.001726   -0.001726    0.002498
+ !forc    4      29    7.899585   14.219254   20.538922    0.001726    0.000531   -0.001726    0.002497
+ !forc    5      47   20.538922    7.899585   14.219254   -0.001725    0.001726    0.000531    0.002497
+ !forc    6      43   14.219254    7.899585   20.538922    0.000531    0.001725   -0.001725    0.002497
+ !forc    7      21    7.899585   14.219254    7.899585    0.001725   -0.000531    0.001725    0.002497
+ !forc    8      51   14.219254   20.538922    7.899585    0.000531   -0.001725    0.001725    0.002497
+ !forc    9      60   20.538922   14.219254   20.538922   -0.001725   -0.000530   -0.001725    0.002496
+ !forc   10      15    7.899585    7.899585   14.219254    0.001725    0.001725   -0.000530    0.002496
+ F_ENF      = ./nfefn.data , newly opened  
+ << CPU Time Consumption -- TOP  10 Subroutines (  111) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W   115.56900 42.74      16       1
+   2  10            modified_gram_schmidt    50.37400 18.63       4       2
+   3  16           evolve_WFs_in_subspace    35.47400 13.12       4       3
+   4  11                    betar_dot_Psi    20.56400  7.60      20       4
+   5   8               m_XC_cal_potential    20.32100  7.51       2       5
+   6  26         m_Force_term_drv_of_flmt    15.48600  5.73       1       6
+   7  13             m_ES_WF_in_Rspace(1)     8.91000  3.29     192       7
+   8  22                    m_CD_softpart     3.21300  1.19       1       8
+   9  12              energy_eigen_values     1.98800  0.74       4       9
+  10  23                    m_CD_hardpart     0.65700  0.24       1      10
+ Total cputime of (  111 )-th iteration     270.42700 / 32759.991 (sec.)
+ ! totch =     882.00000000
+ !  totch, efermi      =     882.00000000     -0.0691170540  <<Postprocessing>>
+ --- The system is insulating or semiconducting ---
+ --- The highest occupied band energy (=vbm) =  -0.07457386
+ F_DOS      = ./dos.data , newly opened  
+ dos_method_act = Gauss_distrib_funcN
+ ValenceBandMaximum = vbm =      -0.0746 total_charge =     882.0000 (m_ES_dos.get_VBM)
+ F_CHR      = ./nfchr.cube , newly opened  
+ n_sub_names =    28 num_subroutines_statistics =     0
+ <<Total elapsed CPU Time until now = 32763.23700 (sec.)>>
+ F_CNTN     = ./continue.data , newly opened  
+ !ion cps and pos at the end of this job
+ !ion    1    1.57991708    1.57991708    1.57991708   0.0625000   0.0625000   0.0625000
+ !ion    2   11.12439818   11.12442527   11.12444269   0.4400705   0.4400716   0.4400723
+ !ion    3    1.57991708    7.89958539    7.89958539   0.0625000   0.3125000   0.3125000
+ !ion    4   11.05941955    4.73975123    4.73975123   0.4375000   0.1875000   0.1875000
+ !ion    5    7.89958539    1.57991708    7.89958539   0.3125000   0.0625000   0.3125000
+ !ion    6    4.73975123   11.05941955    4.73975123   0.1875000   0.4375000   0.1875000
+ !ion    7    7.89958539    7.89958539    1.57991708   0.3125000   0.3125000   0.0625000
+ !ion    8    4.73975123    4.73975123   11.05941955   0.1875000   0.1875000   0.4375000
+ !ion    9    1.57991708    1.57991708   14.21925370   0.0625000   0.0625000   0.5625000
+ !ion   10   11.05941955   11.05941955   23.69875617   0.4375000   0.4375000   0.9375000
+ !ion   11    1.57991708    7.89958539   20.53892202   0.0625000   0.3125000   0.8125000
+ !ion   12   11.05941955    4.73975123   17.37908786   0.4375000   0.1875000   0.6875000
+ !ion   13    7.89958539    1.57991708   20.53892202   0.3125000   0.0625000   0.8125000
+ !ion   14    4.73975123   11.05941955   17.37908786   0.1875000   0.4375000   0.6875000
+ !ion   15    7.89958539    7.89958539   14.21925370   0.3125000   0.3125000   0.5625000
+ !ion   16    4.73975123    4.73975123   23.69875617   0.1875000   0.1875000   0.9375000
+ !ion   17    1.57991708   14.21925370    1.57991708   0.0625000   0.5625000   0.0625000
+ !ion   18   11.05941955   23.69875617   11.05941955   0.4375000   0.9375000   0.4375000
+ !ion   19    1.57991708   20.53892202    7.89958539   0.0625000   0.8125000   0.3125000
+ !ion   20   11.05941955   17.37908786    4.73975123   0.4375000   0.6875000   0.1875000
+ !ion   21    7.89958539   14.21925370    7.89958539   0.3125000   0.5625000   0.3125000
+ !ion   22    4.73975123   23.69875617    4.73975123   0.1875000   0.9375000   0.1875000
+ !ion   23    7.89958539   20.53892202    1.57991708   0.3125000   0.8125000   0.0625000
+ !ion   24    4.73975123   17.37908786   11.05941955   0.1875000   0.6875000   0.4375000
+ !ion   25    1.57991708   14.21925370   14.21925370   0.0625000   0.5625000   0.5625000
+ !ion   26   11.05941955   23.69875617   23.69875617   0.4375000   0.9375000   0.9375000
+ !ion   27    1.57991708   20.53892202   20.53892202   0.0625000   0.8125000   0.8125000
+ !ion   28   11.12441192   17.31409344   17.31405261   0.4400710   0.6849289   0.6849273
+ !ion   29    7.89958539   14.21925370   20.53892202   0.3125000   0.5625000   0.8125000
+ !ion   30    4.73975123   23.69875617   17.37908786   0.1875000   0.9375000   0.6875000
+ !ion   31    7.89958539   20.53892202   14.21925370   0.3125000   0.8125000   0.5625000
+ !ion   32    4.73975123   17.37908786   23.69875617   0.1875000   0.6875000   0.9375000
+ !ion   33   14.21925370    1.57991708    1.57991708   0.5625000   0.0625000   0.0625000
+ !ion   34   23.69875617   11.05941955   11.05941955   0.9375000   0.4375000   0.4375000
+ !ion   35   14.21925370    7.89958539    7.89958539   0.5625000   0.3125000   0.3125000
+ !ion   36   23.69875617    4.73975123    4.73975123   0.9375000   0.1875000   0.1875000
+ !ion   37   20.53892202    1.57991708    7.89958539   0.8125000   0.0625000   0.3125000
+ !ion   38   17.37908786   11.05941955    4.73975123   0.6875000   0.4375000   0.1875000
+ !ion   39   20.53892202    7.89958539    1.57991708   0.8125000   0.3125000   0.0625000
+ !ion   40   17.37908786    4.73975123   11.05941955   0.6875000   0.1875000   0.4375000
+ !ion   41   14.21925370    1.57991708   14.21925370   0.5625000   0.0625000   0.5625000
+ !ion   42   23.69875617   11.05941955   23.69875617   0.9375000   0.4375000   0.9375000
+ !ion   43   14.21925370    7.89958539   20.53892202   0.5625000   0.3125000   0.8125000
+ !ion   44   23.69875617    4.73975123   17.37908786   0.9375000   0.1875000   0.6875000
+ !ion   45   20.53892202    1.57991708   20.53892202   0.8125000   0.0625000   0.8125000
+ !ion   46   17.31408805   11.12443078   17.31410219   0.6849287   0.4400718   0.6849292
+ !ion   47   20.53892202    7.89958539   14.21925370   0.8125000   0.3125000   0.5625000
+ !ion   48   17.37908786    4.73975123   23.69875617   0.6875000   0.1875000   0.9375000
+ !ion   49   14.21925370   14.21925370    1.57991708   0.5625000   0.5625000   0.0625000
+ !ion   50   23.69875617   23.69875617   11.05941955   0.9375000   0.9375000   0.4375000
+ !ion   51   14.21925370   20.53892202    7.89958539   0.5625000   0.8125000   0.3125000
+ !ion   52   23.69875617   17.37908786    4.73975123   0.9375000   0.6875000   0.1875000
+ !ion   53   20.53892202   14.21925370    7.89958539   0.8125000   0.5625000   0.3125000
+ !ion   54   17.37908786   23.69875617    4.73975123   0.6875000   0.9375000   0.1875000
+ !ion   55   20.53892202   20.53892202    1.57991708   0.8125000   0.8125000   0.0625000
+ !ion   56   17.31408155   17.31411873   11.12444654   0.6849284   0.6849299   0.4400724
+ !ion   57   23.69875617   23.69875617   23.69875617   0.9375000   0.9375000   0.9375000
+ !ion   58   14.21925370   20.53892202   20.53892202   0.5625000   0.8125000   0.8125000
+ !ion   59   23.69875617   17.37908786   17.37908786   0.9375000   0.6875000   0.6875000
+ !ion   60   20.53892202   14.21925370   20.53892202   0.8125000   0.5625000   0.8125000
+ !ion   61   17.37908786   23.69875617   17.37908786   0.6875000   0.9375000   0.6875000
+ !ion   62   20.53892202   20.53892202   14.21925370   0.8125000   0.8125000   0.5625000
+ !ion   63   17.37908786   17.37908786   23.69875617   0.6875000   0.6875000   0.9375000
+ tag_diis_history
+ hconst_min,lzero_max =      441     442
+ **** Eigen Values and Occupations ****
+ ** iteration_ionic =       18, iteration_electronic =        6 **
+ EFermi =      -0.06911705
+ ======  Energy Eigen Values in the vicinity of the Fermi energy level (Range=    439 :    444) =====
+ ik =    1     -0.076692   -0.074574   -0.074574   -0.062272   -0.055715   -0.055714
+ ik =    2     -0.076692   -0.074574   -0.074574   -0.062272   -0.055715   -0.055715
+ ik =    3     -0.076692   -0.074574   -0.074574   -0.062272   -0.055715   -0.055714
+ ik =    4     -0.076692   -0.074574   -0.074574   -0.062272   -0.055715   -0.055715
+ ======  Occupations in the vicinity of the Fermi energy level (Range=    439 :    444) =====
+ ik =    1      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ ik =    2      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ ik =    3      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ ik =    4      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ F_ENERG    = ./nfenergy.data , newly opened  
+ F_CNTN_BIN = ./continue_bin.data , newly opened  
+ F_ZAJ      = ./nfzaj.data , newly opened  
+ F_CHGT     = ./nfchgt.data , newly opened  
+  !D Writing zaj 
+ F_FERMI    = ./nfefermi.data , newly opened  
+ <<Total CPU TIME (elapsed time) =     32769.16500 (sec.)>>
+ n_sub_names =    29 num_subroutines_statistics =     1
+ << cpu time statistics >>
+  no  id           subroutine name           time(sec)   count   no(2)
+    1   29                     m_CD_wd_chgq     0.36800       1       1
+ <<Total elapsed CPU Time until now = 32769.22900 (sec.)>>
+  closed filenumber =           31
+  closed filenumber =           52
+  closed filenumber =           53
+  closed filenumber =           55
+  closed filenumber =           42
+  closed filenumber =           43
+  closed filenumber =           44
+  closed filenumber =           75
+  closed filenumber =           65
+  closed filenumber =           66

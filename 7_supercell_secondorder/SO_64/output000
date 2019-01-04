@@ -1,0 +1,932 @@
+ *******************************************************************************
+ *   PPPPPPP    HH     HH      AA        SSSSS    EEEEEEEE                     *
+ *   PPPPPPPP   HH     HH     AAAA      SSSSSSS   EEEEEEEE        /            *
+ *   PP     PP  HH     HH     AAAA      SS   SS   EE             //   0000     *
+ *   PP     PP  HH     HH    AA  AA    SS         EE            //  000  000   *
+ *   PP     PP  HH     HH    AA  AA    SSS        EE            /   00    00   *
+ *   PPPPPPPP   HHHHHHHHH    AA  AA     SSSSS     EEEEEEEE     //   00    00   *
+ *   PPPPPPP    HHHHHHHHH   AA    AA      SSSS    EEEEEEEE     /    00    00   *
+ *   PP         HH     HH   AA    AA        SSS   EE           /    00    00   *
+ *   PP         HH     HH   AAAAAAAA         SS   EE          /     00    00   *
+ *   PP         HH     HH  AAAAAAAAAA  SS   SSS   EE         //     00    00   *
+ *   PP         HH     HH  AA      AA  SSSSSSS    EEEEEEEE   /       000000    *
+ *   PP         HH     HH  AA      AA   SSSSS     EEEEEEEE  //        0000     *
+ *******************************************************************************
+program start     15:40:59  23/04/2018                                          
+ npes =      4 << m_Parallel_get_nproc_from_arg>>
+ set default ne and nk
+ nrank_e =   4
+ nrank_k =   1
+ Revision:  409 -- ORG_Parallel --                                       
+ @(#)system=linux                                                        
+ phaseUnif                                                               
+ --- << CPP options defined in the makefile >> --
+ Parallization: MPI
+ MGS  = TRANSPOSE
+ FFT WF  = FFTW3
+ FFT CD  = FFTW3
+ NO_MGS_DGEMM is not defined
+ NO_NONLOCAL_DGEMM is not defined
+ NO_NONLOCAL_RMM_DGEMM is not defined
+ NO_SUBMAT_DGEMM is not defined
+ NO_FORCE_DGEMM is not defined
+ NO_MATDIAGON_DGEMM is not defined
+ LMM_PREVIOUS is not defined
+ ----------------------------------------------
+ FFILENAMES = ./file_names.data , newly opened  
+ !! mpifiletypes is not read
+ F_POT(1) = ../../pseudopotential/Sn_ggapbe_us_01.pp                    
+ !! npartitioned_files =     0
+ file_existance_nfcntn     =   F file_existance_contfiles =   F
+ file_existance_nfcntn_bin =   F file_existance_contfiles =   F
+ file_existance_nfzaj      =   F file_existance_contfiles =   F
+ file_existance_nfchgt     =   F file_existance_contfiles =   F
+ --- existance check of continue files ---
+ F_CNTN     (= ./continue.data ) not existing
+ F_CNTN_BIN (= ./continue_bin.data ) not existing
+ F_ZAJ      (= ./nfzaj.data ) not existing
+ F_CHGT     (= ./nfchgt.data ) not existing
+ contfiles  (= continue files ) not existing
+ 3contfiles (= 3continue files ) not existing
+ -----------------------------------------
+ F_INP      = ./nfinp.data , newly opened  
+ F_DYNM     = ./nfdynm.data , newly opened  
+ F_ENF      = ./nfefn.data , newly opened  
+ !*--- input-file style = NEW
+ !!  F_INP = ./nfinp.data                    
+
+ !** contents of the input parameter file : ./nfinp.data
+5Control{
+    cpumax = 12 hour
+    condition = -1
+    max_iteration = 1000000
+}
+accuracy{
+    cutoff_wf = 25.00 rydberg
+    cutoff_cd = 225.00 rydberg
+    ksampling{
+        method = monk
+        mesh{
+            nx = 2
+            ny = 2
+            nz = 2
+        }
+    }
+    xctype = ggapbe
+    force_convergence{
+        max_force = 0.1e-3
+    }
+    matrix_diagon{
+        cutoff_wf = 30.00 rydberg
+    }
+    initial_charge_density = Gauss
+    num_bands = 192
+}
+structure{
+    unit_cell{
+        a_vector = 25.2786732532 0.00 0.00
+        b_vector = 0.00 25.2786732532 0.00
+        c_vector = 0.00 0.00 25.2786732532
+    }
+    atom_list{
+        coordinate_system = internal
+        atoms{
+            #default weight = 1, mobile = 1
+            #tag element rx ry rz mobile weight
+             Sn 0.0625 0.0625 0.0625 0 1
+             Sn 0.0625 0.3125 0.3125 0 1
+             Sn 0.4375 0.1875 0.1875 1 1
+             Sn 0.3125 0.0625 0.3125 0 1
+             Sn 0.1875 0.4375 0.1875 1 1
+             Sn 0.3125 0.3125 0.0625 0 1
+             Sn 0.1875 0.1875 0.4375 1 1
+             Sn 0.0625 0.0625 0.5625 0 1
+             Sn 0.4375 0.4375 0.9375 0 1
+             Sn 0.0625 0.3125 0.8125 0 1
+             Sn 0.4375000000286803 0.18750000000098896 0.6874999999772535 1 1
+             Sn 0.3125 0.0625 0.8125 0 1
+             Sn 0.18750000000098896 0.4375000000286803 0.6874999999772535 1 1
+             Sn 0.31250000001483463 0.31250000001483463 0.5625000000029668 1 1
+             Sn 0.1875 0.1875 0.9375 0 1
+             Sn 0.0625 0.5625 0.0625 0 1
+             Sn 0.4375 0.9375 0.4375 0 1
+             Sn 0.0625 0.8125 0.3125 0 1
+             Sn 0.4375000000286803 0.6874999999772535 0.18750000000098896 1 1
+             Sn 0.31250000001483463 0.5625000000029668 0.31250000001483463 1 1
+             Sn 0.1875 0.9375 0.1875 0 1
+             Sn 0.3125 0.8125 0.0625 0 1
+             Sn 0.18750000000098896 0.6874999999772535 0.4375000000286803 1 1
+             Sn 0.0625 0.5625 0.5625 0 1
+             Sn 0.4375 0.9375 0.9375 0 1
+             Sn 0.0625 0.8125 0.8125 0 1
+             Sn 0.4375000000286803 0.6874999999772535 0.6874999999772535 1 1
+             Sn 0.3125 0.5625 0.8125 0 1
+             Sn 0.1875 0.9375 0.6875 0 1
+             Sn 0.3125 0.8125 0.5625 0 1
+             Sn 0.1875 0.6875 0.9375 0 1
+             Sn 0.5625 0.0625 0.0625 0 1
+             Sn 0.9375 0.4375 0.4375 0 1
+             Sn 0.5625 0.3125 0.3125 1 1
+             Sn 0.9375 0.1875 0.1875 0 1
+             Sn 0.8125 0.0625 0.3125 0 1
+             Sn 0.6874999999772535 0.4375000000286803 0.18750000000098896 1 1
+             Sn 0.8125 0.3125 0.0625 0 1
+             Sn 0.6874999999772535 0.18750000000098896 0.4375000000286803 1 1
+             Sn 0.5625 0.0625 0.5625 0 1
+             Sn 0.9375 0.4375 0.9375 0 1
+             Sn 0.5625 0.3125 0.8125 0 1
+             Sn 0.9375 0.1875 0.6875 0 1
+             Sn 0.8125 0.0625 0.8125 0 1
+             Sn 0.6874999999772535 0.4375000000286803 0.6874999999772535 1 1
+             Sn 0.8125 0.3125 0.5625 0 1
+             Sn 0.6875 0.1875 0.9375 0 1
+             Sn 0.5625 0.5625 0.0625 0 1
+             Sn 0.9375 0.9375 0.4375 0 1
+             Sn 0.5625 0.8125 0.3125 0 1
+             Sn 0.9375 0.6875 0.1875 0 1
+             Sn 0.8125 0.5625 0.3125 0 1
+             Sn 0.6875 0.9375 0.1875 0 1
+             Sn 0.8125 0.8125 0.0625 0 1
+             Sn 0.6874999999772535 0.6874999999772535 0.4375000000286803 1 1
+             Sn 0.5625000000029668 0.5625000000029668 0.5625000000029668 1 1
+             Sn 0.9375 0.9375 0.9375 0 1
+             Sn 0.5625 0.8125 0.8125 0 1
+             Sn 0.9375 0.6875 0.6875 0 1
+             Sn 0.8125 0.5625 0.8125 0 1
+             Sn 0.6874999999772535 0.9375000000049448 0.6874999999772535 1 1
+             Sn 0.8125000000306583 0.8125000000306583 0.5625000000029668 1 1
+             Sn 0.6874999999772535 0.6874999999772535 0.9375000000049448 1 1
+        }
+    }
+    element_list{
+        #tag element atomicnumber mass zeta deviation
+         Sn 50 * * *
+    }
+    symmetry{
+        tspace{
+            lattice_system = primitive
+        }
+    }
+    unit_cell_type = bravais
+}
+structural_evolution{
+    method = gdiis
+    dt = 50
+    gdiis{
+        initial_method = cg
+        c_forc2gdiis = 0.001 hartree/bohr
+    }
+}
+Postprocessing{
+    dos{
+        sw_dos = on
+        method = tetrahedral
+        variance = 1.d-6
+        nwd_dos_window_width = 10
+        deltaE_dos = 1.d-4
+    }
+    charge{
+        sw_charge_rspace = ON
+        filetype = cube
+        title = "This is a title line for the graphite"
+    }
+}
+ !**
+ !** driver = general
+ !* tag_control is not found
+ !* default values are applied
+ !** cpumax =            86400.00000000 (sec)
+ !** max_iteration =      10000
+ !** nfstopcheck =          1
+ !** multiple_replica_mode =          0
+ !** sw_ekzaj =          0
+ !** condition is changed: icond =        0
+ !** gmax =   5.0000
+ !** gmaxp =  15.0000
+ !** fftsize_factor_gmaxp =   1.0000
+ !** gmaxp_reduced        =  15.0000
+ !** initial_chg = 
+ !** --- parameters for force_convergence --
+ !** forccr (=max_force) =       0.10000000D-03
+ !** force_error_check_mode = OFF
+ !** max_force_edelta_i =       0.10000000D+01
+ !## evaluating energy before charge construction is            0
+ !** nonlocal potential in real space :   0
+ !** imag =      0
+ !** imag, nspin, af =      0     1     0 <<m_CtrlP_set_nspin_and_af>>
+ !** ndim_spinor =            1
+ !** inversion_symmetry =      0
+ !** symmetry_check_criterion =       0.10000000D-11
+ !** symmetry_method =     -2
+ !** sw_supercell_symmetry =      1
+ !*  tag_tspace is found
+ !** il =     1 <<m_CS_rd_n.set_lattice_system>>
+ !** il =                        primitive
+ !** ngen =     1 <<m_CS_rd_n>>
+ !** ngen_tl =     0 <<m_CS_rd_n>>
+ !** il = 1   P
+ !** unit_cell_type =      0 [bravais] <<m_CS_rd_n>>
+ !** a,b,c,ca,cb,cc =    25.278673   25.278673   25.278673    0.000000    0.000000    0.000000 <<m_CS_rd_n>>
+ !** avec =    25.278673    0.000000    0.000000
+ !** bvec =     0.000000   25.278673    0.000000
+ !** cvec =     0.000000    0.000000   25.278673
+ !** ucinptype =      1
+ !** primitive unit cell vectors are given as
+ !** avec =    25.278673    0.000000    0.000000
+ !** bvec =     0.000000   25.278673    0.000000
+ !** cvec =     0.000000    0.000000   25.278673
+ !** univol =   16153.358399829116 <<m_CS_rd_n>>
+ !** REMARK: npartition_david was set to :        6
+ !** applied wavefunction solver set : davidson -> rmm3
+ !** --- id, sol, till_n,  dts, dte, itr, var, prec, cmix, submat ---
+ !**      - for_init_str -
+ !**   1  56     1  0.200  0.200 100  0  1  1  1
+ !**   2   5    -1  0.200  0.200 100  0  1  1  1
+ !**      - during_str_relax -
+ !**   3  56     1  0.200  0.200 100  0  1  1  1
+ !**   4   5    -1  0.200  0.200 100  0  1  1  1
+ !** n_Charge_Mixing_way =     1
+ !** applied charge-mixing method : pulay
+ !** sw_recomposing =     1
+ !** spin_density_mixfactor =   1.0000
+ !** --- id, method, rmxs, rmxe, itr, var, prec, istr, nbxmix, update ---
+ !**        1     5  0.400  0.400  100    0    1    3   15    2
+ !** -- sw_band_symmetry_analysis  0
+ !** tag_method is found
+ !** sw_dos              =      1
+ !** dos_method          =      1 (Gauss_distrib_func= 1,TETRAHEDRON= 2)
+ !** deltaE_dos          =   0.1000D-03
+ !** variance_dos_GaussD =   0.1000D-05
+ !** nwd_dos_window_width =       10
+ !** dos_subroutine      =     5
+ *** calc_dos_magmom_contrib is set to default,             1
+ !** sw_charge_rspace   =      1
+ !** charge_filetype    =      1
+ !** charge_title    = This is a title line for the graphite                                           
+ !** sw_spin_magmom_rspace =            0
+ !** sw_phonon =            0
+ !** number of atoms =    63
+ !** natm2, natm =     63    63
+ !** natm2, natm =     63    63 <<set_atompos_and_etc>>
+ !** -- tag_constraint is not found --
+ !** -- << set_element_detail >> --
+ !** iatomn(     1) =  50.0000
+ !** ityp =      1 : iatomn,amion,zeta1,alfa,qex,type =  50.0000  51196.4213  0.0000  0.1500  0.0000   Sn  
+ ! ------------ Initial ionic charge --- 
+      id     name    ionic_chrge
+       1      Sn      0.000000
+ ! ---------------------------------------------
+ ! ------------ Initial Magnetic Moment --- 
+      id     name        moment 
+       1      Sn      0.000000
+ ! ---------------------------------------------
+ !** === Atomic coordinates ==
+ !**   id  ( coordinates_in_Intrnal_sys  ) (  coordinates_in_Cartsian_system  ) weight    ityp
+ !**       (   rx         ry         rz  ) (    rx          ry          rz    )      imdtyp    species
+ !**     1   0.062500   0.062500   0.062500      1.5799      1.5799      1.5799  1     0  1   Sn  
+ !**     2   0.062500   0.312500   0.312500      1.5799      7.8996      7.8996  1     0  1   Sn  
+ !**     3   0.437500   0.187500   0.187500     11.0594      4.7398      4.7398  1     1  1   Sn  
+ !**     4   0.312500   0.062500   0.312500      7.8996      1.5799      7.8996  1     0  1   Sn  
+ !**     5   0.187500   0.437500   0.187500      4.7398     11.0594      4.7398  1     1  1   Sn  
+ !**     6   0.312500   0.312500   0.062500      7.8996      7.8996      1.5799  1     0  1   Sn  
+ !**     7   0.187500   0.187500   0.437500      4.7398      4.7398     11.0594  1     1  1   Sn  
+ !**     8   0.062500   0.062500   0.562500      1.5799      1.5799     14.2193  1     0  1   Sn  
+ !**     9   0.437500   0.437500   0.937500     11.0594     11.0594     23.6988  1     0  1   Sn  
+ !**    10   0.062500   0.312500   0.812500      1.5799      7.8996     20.5389  1     0  1   Sn  
+ !**    11   0.437500   0.187500   0.687500     11.0594      4.7398     17.3791  1     1  1   Sn  
+ !**    12   0.312500   0.062500   0.812500      7.8996      1.5799     20.5389  1     0  1   Sn  
+ !**    13   0.187500   0.437500   0.687500      4.7398     11.0594     17.3791  1     1  1   Sn  
+ !**    14   0.312500   0.312500   0.562500      7.8996      7.8996     14.2193  1     1  1   Sn  
+ !**    15   0.187500   0.187500   0.937500      4.7398      4.7398     23.6988  1     0  1   Sn  
+ !**    16   0.062500   0.562500   0.062500      1.5799     14.2193      1.5799  1     0  1   Sn  
+ !**    17   0.437500   0.937500   0.437500     11.0594     23.6988     11.0594  1     0  1   Sn  
+ !**    18   0.062500   0.812500   0.312500      1.5799     20.5389      7.8996  1     0  1   Sn  
+ !**    19   0.437500   0.687500   0.187500     11.0594     17.3791      4.7398  1     1  1   Sn  
+ !**    20   0.312500   0.562500   0.312500      7.8996     14.2193      7.8996  1     1  1   Sn  
+ !**    21   0.187500   0.937500   0.187500      4.7398     23.6988      4.7398  1     0  1   Sn  
+ !**    22   0.312500   0.812500   0.062500      7.8996     20.5389      1.5799  1     0  1   Sn  
+ !**    23   0.187500   0.687500   0.437500      4.7398     17.3791     11.0594  1     1  1   Sn  
+ !**    24   0.062500   0.562500   0.562500      1.5799     14.2193     14.2193  1     0  1   Sn  
+ !**    25   0.437500   0.937500   0.937500     11.0594     23.6988     23.6988  1     0  1   Sn  
+ !**    26   0.062500   0.812500   0.812500      1.5799     20.5389     20.5389  1     0  1   Sn  
+ !**    27   0.437500   0.687500   0.687500     11.0594     17.3791     17.3791  1     1  1   Sn  
+ !**    28   0.312500   0.562500   0.812500      7.8996     14.2193     20.5389  1     0  1   Sn  
+ !**    29   0.187500   0.937500   0.687500      4.7398     23.6988     17.3791  1     0  1   Sn  
+ !**    30   0.312500   0.812500   0.562500      7.8996     20.5389     14.2193  1     0  1   Sn  
+ !**    31   0.187500   0.687500   0.937500      4.7398     17.3791     23.6988  1     0  1   Sn  
+ !**    32   0.562500   0.062500   0.062500     14.2193      1.5799      1.5799  1     0  1   Sn  
+ !**    33   0.937500   0.437500   0.437500     23.6988     11.0594     11.0594  1     0  1   Sn  
+ !**    34   0.562500   0.312500   0.312500     14.2193      7.8996      7.8996  1     1  1   Sn  
+ !**    35   0.937500   0.187500   0.187500     23.6988      4.7398      4.7398  1     0  1   Sn  
+ !**    36   0.812500   0.062500   0.312500     20.5389      1.5799      7.8996  1     0  1   Sn  
+ !**    37   0.687500   0.437500   0.187500     17.3791     11.0594      4.7398  1     1  1   Sn  
+ !**    38   0.812500   0.312500   0.062500     20.5389      7.8996      1.5799  1     0  1   Sn  
+ !**    39   0.687500   0.187500   0.437500     17.3791      4.7398     11.0594  1     1  1   Sn  
+ !**    40   0.562500   0.062500   0.562500     14.2193      1.5799     14.2193  1     0  1   Sn  
+ !**    41   0.937500   0.437500   0.937500     23.6988     11.0594     23.6988  1     0  1   Sn  
+ !**    42   0.562500   0.312500   0.812500     14.2193      7.8996     20.5389  1     0  1   Sn  
+ !**    43   0.937500   0.187500   0.687500     23.6988      4.7398     17.3791  1     0  1   Sn  
+ !**    44   0.812500   0.062500   0.812500     20.5389      1.5799     20.5389  1     0  1   Sn  
+ !**    45   0.687500   0.437500   0.687500     17.3791     11.0594     17.3791  1     1  1   Sn  
+ !**    46   0.812500   0.312500   0.562500     20.5389      7.8996     14.2193  1     0  1   Sn  
+ !**    47   0.687500   0.187500   0.937500     17.3791      4.7398     23.6988  1     0  1   Sn  
+ !**    48   0.562500   0.562500   0.062500     14.2193     14.2193      1.5799  1     0  1   Sn  
+ !**    49   0.937500   0.937500   0.437500     23.6988     23.6988     11.0594  1     0  1   Sn  
+ !**    50   0.562500   0.812500   0.312500     14.2193     20.5389      7.8996  1     0  1   Sn  
+ !**    51   0.937500   0.687500   0.187500     23.6988     17.3791      4.7398  1     0  1   Sn  
+ !**    52   0.812500   0.562500   0.312500     20.5389     14.2193      7.8996  1     0  1   Sn  
+ !**    53   0.687500   0.937500   0.187500     17.3791     23.6988      4.7398  1     0  1   Sn  
+ !**    54   0.812500   0.812500   0.062500     20.5389     20.5389      1.5799  1     0  1   Sn  
+ !**    55   0.687500   0.687500   0.437500     17.3791     17.3791     11.0594  1     1  1   Sn  
+ !**    56   0.562500   0.562500   0.562500     14.2193     14.2193     14.2193  1     1  1   Sn  
+ !**    57   0.937500   0.937500   0.937500     23.6988     23.6988     23.6988  1     0  1   Sn  
+ !**    58   0.562500   0.812500   0.812500     14.2193     20.5389     20.5389  1     0  1   Sn  
+ !**    59   0.937500   0.687500   0.687500     23.6988     17.3791     17.3791  1     0  1   Sn  
+ !**    60   0.812500   0.562500   0.812500     20.5389     14.2193     20.5389  1     0  1   Sn  
+ !**    61   0.687500   0.937500   0.687500     17.3791     23.6988     17.3791  1     1  1   Sn  
+ !**    62   0.812500   0.812500   0.562500     20.5389     20.5389     14.2193  1     1  1   Sn  
+ !**    63   0.687500   0.687500   0.937500     17.3791     17.3791     23.6988  1     1  1   Sn  
+ !** i =     1 element_name = Sn  
+ !** addition frequency :       -1
+ !**   ia1 - ia2, ityp, ionic_mass 
+ !**    1 -   63   1         51196.42125
+  !** sw_mix_charge_ekindens is turned off
+ !** base_reduction_for_GAMMA =   1 (=default value) <<m_Kp_rd_n>>
+ !** base_symmetrization_for_GAMMA =   1 (=default value) <<m_Kp_rd_n>>
+<< Monkhorst-Pack scheme
+ MP index:   2   2   2
+ kp shift:    0.50000    0.50000    0.50000
+ il =   1
+ use_trs =   1
+   Monkhorst-Pack scheme >>
+
+ <***   PAW one center integral   ***>
+ 1-th element : Sn : sphericalharmonicsexpansion : dnr =  1
+ --- check of file_names ---
+ F_INP      = ./nfinp.data
+ F_POT(1)   = ../../pseudopotential/Sn_ggapbe_us_01.pp
+ F_POT(2)   = ./pot.02
+ F_POT(3)   = ./pot.03
+ F_KPOINT   = ./kpoint.data
+ F_CHGT     = ./nfchgt.data
+ F_CNTN     = ./continue.data
+ F_CNTN_BIN = ./continue_bin.data
+ F_ZAJ      = ./nfzaj.data
+ F_STOP     = ./nfstop.data
+ F_NEB_OUT   = ./output_neb                                                
+ F_IMAGE(0)  = ./endpoint0.data                                            
+ F_IMAGE(-1) = ./endpoint1.data                                            
+ F_CNTN_BIN = ./continue_bin_paw.data
+ ngen =      1
+ igen =      1 jgen =     0    1    0    1    0    1
+  << rltv, altv >>
+  0.2486  0.0000  0.0000            25.2787  0.0000  0.0000
+  0.0000  0.2486  0.0000             0.0000 25.2787  0.0000
+  0.0000  0.0000  0.2486             0.0000  0.0000 25.2787
+ -- m_CS_alloc_op_tau --
+ !! nopr, af =     1    0
+ -- m_CS_alloc_op_tau_tl --
+ !! ngen_tl =     0
+ ngen_tl =      0
+  --- SC Symmetry Operations (CARTS, PUCV) --- (in m_CS_gnrt_symm_operators_tl)
+ !! ngen_tl =      0
+=== Lattice parameters ===
+a    ,b   ,c     =     25.27867325    25.27867325    25.27867325 Bohr
+alpha,beta,gamma =     90.00000000    90.00000000    90.00000000 degree
+             Bravais lattice: aP
+Crystallographic point group: C1  1    
+                 Space group: P1        
+ -- allocation of napt --
+ !! natm =    63 nopr+af =     1
+  --- Symmetry Operations (CARTS, PUCV) --- (in m_CS_wd_op_and_tau)
+ !! nopr+af =      1
+  #symmetry op. =            1 e    
+  1.0000  0.0000  0.0000  0.0000     1.0000  0.0000  0.0000  0.0000
+  0.0000  1.0000  0.0000  0.0000     0.0000  1.0000  0.0000  0.0000
+  0.0000  0.0000  1.0000  0.0000     0.0000  0.0000  1.0000  0.0000
+  -- OK symmetry check of atomic coordinates
+ kimg =     2 (m_CtrlP_set_kimg)
+  ! Size of rhombohedrons which contain spheres of G_vectors being smaller than gmax and gmaxp
+  KNX ,KNY ,KNZ  =     41    41    41
+  KNXP,KNYP,KNZP =     61    61    61
+  knxp_reduced, knyp_reduced, knzp_reduced =     61    61    61
+  --- fft_box_size <<m_FFT_set_box_sizes>> ---
+  WF    90   90   90
+  CD   128  128  128
+ !pwBS kg0, kg, kgp =      34049    272633    920745
+ !pwBS kgp_reduced  =     920745
+ !pwBS   kg0 = (#G(<=Gmax)), kg = (#G(<=2Gmax)), kgp = (#G(<=Gmaxp))
+  !kg  =       272633
+  !kgp =       920745
+  !kgp_reduced =       920745
+ !pwbs  ngshell =     1531
+  n_rGpv =           61          61          61
+  mmdim  =          122         122         122
+ !pwBS: g_list size =       122      122      122
+ !pwBS: (ngpt_l)s are all decided by using g_list
+  ---- (WF)FFT size ----
+     (nfft, fft_box_size_WF)
+ FFT total elements(including work area) =    1458000
+ FFT box adjustable dimension            =    90   90   90
+ FFT box real dimension                  =    90   90   90
+  ---- (CD)FFT size ----
+     (nfftps, fft_box_size_CD)
+ FFT total elements(including work area) =    4194304
+ FFT box adjustable dimension            =   128  128  128
+ FFT box real dimension                  =   128  128  128
+  ---- (CD_c)FFT size ----
+     (nfftp, fft_box_size_CD_c)
+ FFT total elements(including work area) =    4194304
+ FFT box adjustable dimension            =   128  128  128
+ !(init_fft_coef_WF) nl, nm, nn   =       90      90      90
+ !(init_fft_coef_WF) plan_WF(1:2) =             51018176            51021248
+ !(CDFFT_setup) nl, nm, nn   =      128     128     128
+ !(CDFFT_setup) plan_CD(1:2) =             51019664            50880800
+ !kp kv3 =     4 nspin =     1
+ ndim_spinor =            1
+ Special k-points generation starts.
+ number of k-points in MP mesh        =     8
+ number of k-points in full BZ        =     8
+ Special k-points generation ends.
+
+  === k-points generated or read ===
+ ik        CARTS                      BUCS                   QITG
+     1  0.0621  0.0621  0.0621     0.2500  0.2500  0.2500     0.2500
+     2 -0.0621 -0.0621  0.0621    -0.2500 -0.2500  0.2500     0.2500
+     3 -0.0621  0.0621 -0.0621    -0.2500  0.2500 -0.2500     0.2500
+     4 -0.0621  0.0621  0.0621    -0.2500  0.2500  0.2500     0.2500
+
+ <<< m_pwBS_for_each_WF >>>
+ !# ** kg1_ext, kg1, nbmx (=matrix size) =    34085   34085   36243
+ !#  JJT(=sum(iba)) =   136340 MEAN GRV =   4.99708839
+ !# pwbs kg_gamma =        0
+
+ ! iba(     1) =  34085,  nbase( 34085,     1) =   36174
+ ! iba(     2) =  34085,  nbase( 34085,     2) =   36243
+ ! iba(     3) =  34085,  nbase( 34085,     3) =   36238
+ ! iba(     4) =  34085,  nbase( 34085,     4) =   36237
+  F_POT(nfpp) = ../../pseudopotential/Sn_ggapbe_us_01.pp
+ !PP CHECKING POTENTIAL FILE    37
+ !PP PP type --> GNCPP2 , is_gncpp =  2
+ !PP natomn, fval, iloc, itpcc =      50.000000     14.000000  2  0
+ !PP ggapbe    : NAME 
+ !PP read_ps_xctype: ps_xctype = ggapbe 
+ !PP     1.970000    0.780000    5.008600   -4.008600  :   ALP,CC
+ !PP 1501   96.000000   60.000000  :   nmesh,  xh, rmax
+ !PP it =    1 <<sum_of_vlocr>>
+ !PP Int_{i=1}^{nmesh} wos(i)vlocr(i)*radr(i)**2 =      -0.31831863D+02
+ !PP alp1, alp2, acoef =   1.97000000  0.78000000  5.00860000
+ !PP s      =      15.362555369629
+ !PP etot1  =       0.307479782374
+ !PP TOTAL ENERGY CORRECTION FROM PS     =     0.3074797824D+00
+ !** [asms extension] --- orbital index info ---
+ !* orbital index is not found in PP for it=           1
+ !** num of orbital index. for it =   1  is   0
+ !** max_num_orb_index =   0
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260054886296D+04
+ TOTCH (total charge) =        0.882000000000D+03
+ ### Warning(1309): Number of bands(neg) is insufficient:
+                totch =    882.000 >= neg*2.0 =    384.000
+ !** REMARK: the number of bands has been redefined
+ !** REMARK: npartition_david is reset to :       14
+ ### Warning(1309): Number of bands is enlarged         479
+ !PP modnrm =     1 (EXECUT)
+ !pwBS: nel_Ylm =     9 (m_pwBS_sphrp)
+ !! total ionic_charge is    0.0000000000000000      e
+ !! extra charge is   -0.0000000000000000      e
+ Charge density initialization: Gauss distrib func
+  <<< modified_gram_schmidt_vanderbilt_type >>>
+ !ibsize(=nblocksize_betar_w) (m_ES_betar_dot_WFs_4_each_k) =       32
+ ia_i, ia_f, msize =        1       5      55
+ ia_i, ia_f, msize =        6      10      55
+ ia_i, ia_f, msize =       11      15      55
+ ia_i, ia_f, msize =       16      20      55
+ ia_i, ia_f, msize =       21      25      55
+ ia_i, ia_f, msize =       26      30      55
+ ia_i, ia_f, msize =       31      35      55
+ ia_i, ia_f, msize =       36      40      55
+ ia_i, ia_f, msize =       41      45      55
+ ia_i, ia_f, msize =       46      50      55
+ ia_i, ia_f, msize =       51      55      55
+ ia_i, ia_f, msize =       56      60      55
+ ia_i, ia_f, msize =       61      63      33
+ mype =   0 msizemax, natm_redmax =       55       5
+ ! nblocksize_mgs_is_given is fault
+! NB(=nblocksize_mgs) (mgs_4_each_k_G) =        8
+ n_sub_names =    14 num_subroutines_statistics =    13
+ << cpu time statistics >>
+  no  id           subroutine name           time(sec)   count   no(2)
+    1   10            modified_gram_schmidt   479.91900       4       1
+    2   11                    betar_dot_Psi   151.50400       4       2
+    3    8               m_XC_cal_potential    73.63600       1       3
+    4   12              energy_eigen_values    54.96800       4       4
+    5   13             m_ES_WF_in_Rspace(1)    48.33900     480       5
+    6    5              m_NLP_betar_dot_PWs    35.32200       1       6
+    7   14           m_ES_sort_eigen_values     6.23800       1       7
+    8    6            m_IS_structure_factor     6.13500       1       8
+    9    2             m_PP_vanderbilt_type     0.99700       2       9
+   10    4                  m_PP_local_part     0.14200       1      10
+   11    7  m_CD_initial_CD_by_Gauss_func_kt    0.03800       1      11
+   12    9               m_ESlhxc_potential     0.03700       1      12
+   13    1           m_IS_symm_check_of_pos     0.00100       1      13
+ <<Total elapsed CPU Time until now =   707.31000 (sec.)>>
+ ---- iteration(total, ionic, elelctronic) =        1       1       1 ----
+ !ibsize(=nblocksize_vnonlocal_w) (m_ES_Vnonlocal_W) =     1000
+ ---- Parameters decided in allocate_matrix of MdDavidson ---
+ -- npartition_david, nblock, np_e =       14      14     120 --
+ -- ista_e_l, iend_e_l, ielm_e_l --
+ (  1)        1        9        9
+ (  2)       10       18        9
+ (  3)       19       27        9
+ (  4)       28       36        9
+ (  5)       37       45        9
+ (  6)       46       54        9
+ (  7)       55       63        9
+ (  8)       64       72        9
+ (  9)       73       80        8
+ ( 10)       81       88        8
+ ( 11)       89       96        8
+ ( 12)       97      104        8
+ ( 13)      105      112        8
+ ( 14)      113      120        8
+ *** WARN CHG.DEN =  -0.9413493D-04 < 0.0 AT    49595 ***
+ *** WARN CHG.DEN =  -0.9582635D-04 < 0.0 AT    50839 ***
+ *** WARN CHG.DEN =  -0.9900098D-04 < 0.0 AT    50903 ***
+ *** WARN CHG.DEN =  -0.9077957D-04 < 0.0 AT    51982 ***
+ *** WARN CHG.DEN =  -0.8723787D-04 < 0.0 AT    52046 ***
+ *** WARN CHG.DEN =  -0.9006184D-04 < 0.0 AT    52580 ***
+ *** WARN CHG.DEN =  -0.8836716D-04 < 0.0 AT    53723 ***
+ *** WARN CHG.DEN =  -0.8498928D-04 < 0.0 AT    55031 ***
+ *** WARN CHG.DEN =  -0.8359312D-04 < 0.0 AT    56110 ***
+ *** WARN CHG.DEN =  -0.9484474D-04 < 0.0 AT    57851 ***
+ ### Warning(4202): Number of <<Negative Charge Density>> =      494, (node   0) =       135
+ TOTAL ENERGY FOR     1 -TH ITER=  -3880.340575707087  edel =  -0.388034D+04 : SOLVER = SUBMAT + PKOSUGI
+ KI=    582.422684576458 HA=   3387.664653769114 XC=   -791.055682767461 LO=  -3267.990699535188
+ NL=  -1190.831825140137 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000843648968
+ PHYSICALLY CORRECT ENERGY =   -3880.340153882603
+ << CPU Time Consumption -- TOP  10 Subroutines (    1) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  1579.78800 30.97      16       1
+   2  17         decide_correction_vector  1551.93500 30.43      12       2
+   3  19       m_ES_orthogonal_phi_to_WFs  1020.49200 20.01      12       3
+   4  16           evolve_WFs_in_subspace   778.44000 15.26       4       4
+   5  11                    betar_dot_Psi   668.86400 13.11      20       5
+   6  10            modified_gram_schmidt   483.39100  9.48       4       6
+   7  13             m_ES_WF_in_Rspace(1)   317.21800  6.22    4320       7
+   8  20                 prepare_Hloc_phi   286.57700  5.62      12       8
+   9   8               m_XC_cal_potential    71.33600  1.40       2       9
+  10  21          evolve_WFs_in_subspace     70.79300  1.39     168      10
+ Total cputime of (    1 )-th iteration    5100.62000 /  5807.930 (sec.)
+ ---- iteration(total, ionic, elelctronic) =        2       1       2 ----
+ TOTAL ENERGY FOR     2 -TH ITER=  -3952.567431445846  edel =  -0.722269D+02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    641.430192813055 HA=   2490.092723504101 XC=   -654.400546272696 LO=  -2875.831810887860
+ NL=   -953.308742823879 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000384817663
+ PHYSICALLY CORRECT ENERGY =   -3952.567239037015
+ << CPU Time Consumption -- TOP  10 Subroutines (    2) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector  1383.66100 35.57      12       1
+   2  15                 m_ES_Vnonlocal_W  1234.20600 31.73      16       2
+   3  19       m_ES_orthogonal_phi_to_WFs   905.29200 23.28      12       3
+   4  11                    betar_dot_Psi   494.70100 12.72      20       4
+   5  16           evolve_WFs_in_subspace   404.48500 10.40       4       5
+   6  10            modified_gram_schmidt   285.05500  7.33       4       6
+   7  13             m_ES_WF_in_Rspace(1)   264.66000  6.80    4320       7
+   8  20                 prepare_Hloc_phi   242.35100  6.23      12       8
+   9  22                    m_CD_softpart    81.35300  2.09       1       9
+  10  21          evolve_WFs_in_subspace     60.83600  1.56     168      10
+ Total cputime of (    2 )-th iteration    3889.47300 /  9697.403 (sec.)
+ ---- iteration(total, ionic, elelctronic) =        3       1       3 ----
+ TOTAL ENERGY FOR     3 -TH ITER=  -4221.675045254191  edel =  -0.269108D+03 : SOLVER = SUBMAT + PKOSUGI
+ KI=    591.982256556347 HA=   1942.807684047164 XC=   -575.349664740199 LO=  -2586.439635906461
+ NL=   -994.126324676912 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000497573226
+ PHYSICALLY CORRECT ENERGY =   -4221.674796467578
+ ---- iteration(total, ionic, elelctronic) =        4       1       4 ----
+ TOTAL ENERGY FOR     4 -TH ITER=  -4263.273264534761  edel =  -0.415982D+02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    604.305643602370 HA=   1759.420413499736 XC=   -549.438688234395 LO=  -2463.386621584202
+ NL=  -1013.625010437163 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000138420203
+ PHYSICALLY CORRECT ENERGY =   -4263.273195324660
+ ---- iteration(total, ionic, elelctronic) =        5       1       5 ----
+ TOTAL ENERGY FOR     5 -TH ITER=  -4275.551564662200  edel =  -0.122783D+02 : SOLVER = SUBMAT + PKOSUGI
+ KI=    610.731450235047 HA=   1669.362982635777 XC=   -536.809326582717 LO=  -2397.587008049364
+ NL=  -1020.700799940039 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        6       1       6 ----
+ TOTAL ENERGY FOR     6 -TH ITER=  -4283.148372278550  edel =  -0.759681D+01 : SOLVER = SUBMAT + PKOSUGI
+ KI=    614.773051249353 HA=   1535.198449658224 XC=   -519.035476945577 LO=  -2289.120425437399
+ NL=  -1024.415107842247 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        7       1       7 ----
+ TOTAL ENERGY FOR     7 -TH ITER=  -4283.540919124639  edel =  -0.392547D+00 : SOLVER = SUBMAT + PKOSUGI
+ KI=    609.010112530345 HA=   1528.480144585339 XC=   -518.965487489662 LO=  -2278.578923355288
+ NL=  -1022.937902434469 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =        8       1       8 ----
+ TOTAL ENERGY FOR     8 -TH ITER=  -4283.587280774616  edel =  -0.463616D-01 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.320097442581 HA=   1519.381402745624 XC=   -517.923619324698 LO=  -2270.118079183316
+ NL=  -1022.698219493903 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (    8) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  17         decide_correction_vector  1518.75600 36.10      12       1
+   2  15                 m_ES_Vnonlocal_W  1232.96000 29.31      16       2
+   3  19       m_ES_orthogonal_phi_to_WFs  1040.06700 24.72      12       3
+   4  11                    betar_dot_Psi   494.62500 11.76      20       4
+   5  16           evolve_WFs_in_subspace   442.89500 10.53       4       5
+   6  10            modified_gram_schmidt   355.92100  8.46       4       6
+   7  13             m_ES_WF_in_Rspace(1)   264.14500  6.28    4320       7
+   8  20                 prepare_Hloc_phi   242.43600  5.76      12       8
+   9  22                    m_CD_softpart    84.35300  2.01       1       9
+  10  23                    m_CD_hardpart    62.33700  1.48       1      10
+ Total cputime of (    8 )-th iteration    4206.63100 / 34562.879 (sec.)
+ ---- iteration(total, ionic, elelctronic) =        9       1       9 ----
+ TOTAL ENERGY FOR     9 -TH ITER=  -4283.594069420356  edel =  -0.678865D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.211130768275 HA=   1521.230237809409 XC=   -518.122411521777 LO=  -2271.791237053235
+ NL=  -1022.572926462124 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (    9) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  1231.70000 33.24      16       1
+   2  10            modified_gram_schmidt  1043.78700 28.17       4       2
+   3  16           evolve_WFs_in_subspace   541.61400 14.62       4       3
+   4  11                    betar_dot_Psi   492.65800 13.30      20       4
+   5  13             m_ES_WF_in_Rspace(1)   175.80400  4.74    2880       5
+   6  22                    m_CD_softpart   109.23500  2.95       1       6
+   7   8               m_XC_cal_potential    59.91600  1.62       2       7
+   8  23                    m_CD_hardpart    59.41100  1.60       1       8
+   9  12              energy_eigen_values    32.63100  0.88       4       9
+  10  25                   m_CD_mix_pulay    13.29100  0.36       1      10
+ Total cputime of (    9 )-th iteration    3705.08200 / 38267.950 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       10       1      10 ----
+ TOTAL ENERGY FOR    10 -TH ITER=  -4283.596442659777  edel =  -0.237324D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.160963753514 HA=   1520.276838442139 XC=   -518.018296864996 LO=  -2270.908402577958
+ NL=  -1022.558682451572 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   10) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  1231.41700 37.55      16       1
+   2  10            modified_gram_schmidt   634.89400 19.36       4       2
+   3  16           evolve_WFs_in_subspace   624.67900 19.05       4       3
+   4  11                    betar_dot_Psi   492.84300 15.03      20       4
+   5  13             m_ES_WF_in_Rspace(1)   176.00600  5.37    2880       5
+   6   8               m_XC_cal_potential    56.87000  1.73       2       6
+   7  22                    m_CD_softpart    38.29800  1.17       1       7
+   8  23                    m_CD_hardpart    33.37300  1.02       1       8
+   9  12              energy_eigen_values    32.59600  0.99       4       9
+  10  25                   m_CD_mix_pulay    10.49300  0.32       1      10
+ Total cputime of (   10 )-th iteration    3279.38900 / 41547.338 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       11       1      11 ----
+ TOTAL ENERGY FOR    11 -TH ITER=  -4283.598500114527  edel =  -0.205745D-02 : SOLVER = SUBMAT + RMM3
+ KI=    608.131309688010 HA=   1519.996288124007 XC=   -518.027787510949 LO=  -2270.603636467417
+ NL=  -1022.545810987274 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       12       1      12 ----
+ TOTAL ENERGY FOR    12 -TH ITER=  -4283.598674820450  edel =  -0.174706D-03 : SOLVER = SUBMAT + RMM3
+ KI=    608.137820393120 HA=   1519.680539141889 XC=   -517.981612245390 LO=  -2270.341900738930
+ NL=  -1022.544658410236 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   12) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  1231.76400 35.51      16       1
+   2  10            modified_gram_schmidt   752.12600 21.68       4       2
+   3  16           evolve_WFs_in_subspace   679.34400 19.58       4       3
+   4  11                    betar_dot_Psi   492.51100 14.20      20       4
+   5  13             m_ES_WF_in_Rspace(1)   175.75300  5.07    2880       5
+   6   8               m_XC_cal_potential    63.38100  1.83       2       6
+   7  22                    m_CD_softpart    52.22700  1.51       1       7
+   8  23                    m_CD_hardpart    38.44900  1.11       1       8
+   9  12              energy_eigen_values    32.62400  0.94       4       9
+  10  25                   m_CD_mix_pulay     8.30300  0.24       1      10
+ Total cputime of (   12 )-th iteration    3468.74700 / 48301.343 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       13       1      13 ----
+ TOTAL ENERGY FOR    13 -TH ITER=  -4283.598698026579  edel =  -0.232061D-04 : SOLVER = SUBMAT + RMM3
+ KI=    608.136391829909 HA=   1519.785234310555 XC=   -517.991567077427 LO=  -2270.434732390823
+ NL=  -1022.545161737889 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       14       1      14 ----
+ TOTAL ENERGY FOR    14 -TH ITER=  -4283.598706248347  edel =  -0.822177D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.137765107425 HA=   1519.732160980675 XC=   -517.985408346791 LO=  -2270.388754707527
+ NL=  -1022.545606321225 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ ---- iteration(total, ionic, elelctronic) =       15       1      15 ----
+ TOTAL ENERGY FOR    15 -TH ITER=  -4283.598709547303  edel =  -0.329896D-05 : SOLVER = SUBMAT + RMM3
+ KI=    608.136363448438 HA=   1519.739106217228 XC=   -517.987264938683 LO=  -2270.392193854572
+ NL=  -1022.545857458810 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   15) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  1232.89100 32.87      16       1
+   2  10            modified_gram_schmidt   993.49300 26.48       4       2
+   3  16           evolve_WFs_in_subspace   613.81800 16.36       4       3
+   4  11                    betar_dot_Psi   492.46200 13.13      20       4
+   5  13             m_ES_WF_in_Rspace(1)   175.72600  4.68    2880       5
+   6  22                    m_CD_softpart   134.29000  3.58       1       6
+   7   8               m_XC_cal_potential    69.95700  1.86       2       7
+   8  23                    m_CD_hardpart    35.89200  0.96       1       8
+   9  12              energy_eigen_values    32.63300  0.87       4       9
+  10  25                   m_CD_mix_pulay    21.48800  0.57       1      10
+ Total cputime of (   15 )-th iteration    3751.29600 / 59201.075 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       16       1      16 ----
+ TOTAL ENERGY FOR    16 -TH ITER=  -4283.598710300545  edel =  -0.753243D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.137529065399 HA=   1519.726889472915 XC=   -517.985880621561 LO=  -2270.382331659807
+ NL=  -1022.546053596588 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   16) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  10            modified_gram_schmidt  1241.27700 29.84       4       1
+   2  15                 m_ES_Vnonlocal_W  1231.76600 29.61      16       2
+   3  16           evolve_WFs_in_subspace   766.39800 18.43       4       3
+   4  11                    betar_dot_Psi   492.77300 11.85      20       4
+   5  13             m_ES_WF_in_Rspace(1)   175.64600  4.22    2880       5
+   6  22                    m_CD_softpart   146.82200  3.53       1       6
+   7   8               m_XC_cal_potential    65.70800  1.58       2       7
+   8  23                    m_CD_hardpart    46.04700  1.11       1       8
+   9  12              energy_eigen_values    32.61700  0.78       4       9
+  10  25                   m_CD_mix_pulay    11.72600  0.28       1      10
+ Total cputime of (   16 )-th iteration    4159.33600 / 63360.411 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       17       1      17 ----
+ TOTAL ENERGY FOR    17 -TH ITER=  -4283.598710450262  edel =  -0.149716D-06 : SOLVER = SUBMAT + RMM3
+ KI=    608.137424252904 HA=   1519.727092959032 XC=   -517.985954226345 LO=  -2270.382393270575
+ NL=  -1022.546017204374 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ << CPU Time Consumption -- TOP  10 Subroutines (   17) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  1231.79600 28.49      16       1
+   2  10            modified_gram_schmidt  1097.00400 25.37       4       2
+   3  16           evolve_WFs_in_subspace   776.03000 17.95       4       3
+   4  11                    betar_dot_Psi   492.71500 11.40      20       4
+   5  13             m_ES_WF_in_Rspace(1)   175.95900  4.07    2880       5
+   6  22                    m_CD_softpart   172.07000  3.98       1       6
+   7   8               m_XC_cal_potential   145.10500  3.36       2       7
+   8  23                    m_CD_hardpart   142.67300  3.30       1       8
+   9  25                   m_CD_mix_pulay    65.89900  1.52       1       9
+  10  12              energy_eigen_values    32.60100  0.75       4      10
+ Total cputime of (   17 )-th iteration    4323.41900 / 67683.830 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       18       1      18 ----
+ TOTAL ENERGY FOR    18 -TH ITER=  -4283.598710502878  edel =  -0.526161D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.137563149339 HA=   1519.723721522748 XC=   -517.985599979517 LO=  -2270.379508488959
+ NL=  -1022.546023745586 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.5262D-07 edelta =   0.1000D-08 ntcnvg =       1
+ << CPU Time Consumption -- TOP  10 Subroutines (   18) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  15                 m_ES_Vnonlocal_W  2048.77700 34.08      16       1
+   2  10            modified_gram_schmidt  1404.80100 23.37       4       2
+   3  16           evolve_WFs_in_subspace  1192.39900 19.83       4       3
+   4  11                    betar_dot_Psi   753.52700 12.53      20       4
+   5  13             m_ES_WF_in_Rspace(1)   280.16900  4.66    2880       5
+   6  22                    m_CD_softpart   197.54500  3.29       1       6
+   7   8               m_XC_cal_potential    77.94600  1.30       2       7
+   8  12              energy_eigen_values    50.45400  0.84       4       8
+   9  25                   m_CD_mix_pulay    38.39300  0.64       1       9
+  10  23                    m_CD_hardpart    37.61500  0.63       1      10
+ Total cputime of (   18 )-th iteration    6011.98700 / 73695.817 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       19       1      19 ----
+ TOTAL ENERGY FOR    19 -TH ITER=  -4283.598710520735  edel =  -0.178570D-07 : SOLVER = SUBMAT + RMM3
+ KI=    608.137538315672 HA=   1519.724469099513 XC=   -517.985689833650 LO=  -2270.380152136217
+ NL=  -1022.546013005149 EW=  -2600.548862960904 PC=     -0.000000000000 EN=     -0.000000000000
+ edeltb =  -0.1786D-07 edelta =   0.1000D-08 ntcnvg =       2
+ !D forcmx =   0.727039902291D-02 at the iteration_ionic of        1
+ !!  F_INP = ./nfinp.data                    
+tag_epsilon is not given in the inputfile <<CtrlP_rd_epsilon>>
+ F_INP      = ./nfinp.data , newly opened  
+ F_DYNM     = ./nfdynm.data , newly opened  
+ !forc cps and forc at (iter_ion, iter_total =     1      19 )
+ !forc ***   10 largest-force atoms ***
+ !forc   no    iatm      cps(1)      cps(2)      cps(3)   forc_l(1)   forc_l(2)   forc_l(3)  abs(forc_l)
+ !forc    1      20    7.899585   14.219254    7.899585    0.004198   -0.004198    0.004197    0.007270
+ !forc    2      56   14.219254   14.219254   14.219254   -0.004197   -0.004197   -0.004197    0.007269
+ !forc    3      34   14.219254    7.899585    7.899585   -0.004197    0.004197    0.004197    0.007269
+ !forc    4      14    7.899585    7.899585   14.219254    0.004196    0.004197   -0.004197    0.007269
+ !forc    5      60   20.538922   14.219254   20.538922    0.000880    0.001406    0.000881    0.001878
+ !forc    6      36   20.538922    1.579917    7.899585    0.000880   -0.000880   -0.001406    0.001878
+ !forc    7      58   14.219254   20.538922   20.538922    0.001405    0.000880    0.000881    0.001878
+ !forc    8      32   14.219254    1.579917    1.579917    0.001405   -0.000880   -0.000881    0.001878
+ !forc    9      18    1.579917   20.538922    7.899585   -0.000880    0.000880   -0.001405    0.001877
+ !forc   10      16    1.579917   14.219254    1.579917   -0.000880    0.001405   -0.000880    0.001877
+ F_ENF      = ./nfefn.data , newly opened  
+ CG2: Next step is iter_CG = 1 and iter_linmin = 2
+  ! iteration_ionic =            2
+  alf =     2.166667 aamin =    13.000000
+ ! kg =    272633
+  newldg =    46297
+  Ewald sum =       -0.260087017861D+04
+ << CPU Time Consumption -- TOP  10 Subroutines (   19) >>
+  no  id           subroutine name          time(sec)  r(%)    count   no(2)
+   1  10            modified_gram_schmidt  1878.98100 29.31       8       1
+   2  15                 m_ES_Vnonlocal_W  1362.36900 21.25      16       2
+   3  16           evolve_WFs_in_subspace  1017.52900 15.87       4       3
+   4  26         m_Force_term_drv_of_flmt   745.65200 11.63       1       4
+   5  11                    betar_dot_Psi   685.42400 10.69      24       5
+   6  13             m_ES_WF_in_Rspace(1)   235.20700  3.67    3360       6
+   7  22                    m_CD_softpart   180.78700  2.82       1       7
+   8   8               m_XC_cal_potential   164.15200  2.56       3       8
+   9  12              energy_eigen_values    85.58500  1.33       8       9
+  10  25                   m_CD_mix_pulay    74.17900  1.16       1      10
+ Total cputime of (   19 )-th iteration    6411.66300 / 80107.480 (sec.)
+ ---- iteration(total, ionic, elelctronic) =       20       2       1 ----
+ TOTAL ENERGY FOR    20 -TH ITER=  -4283.598982405700  edel =  -0.271885D-03 : SOLVER = SUBMAT + PKOSUGI
+ KI=    608.132594670764 HA=   1519.367174231164 XC=   -517.982827053768 LO=  -2269.699505544012
+ NL=  -1022.546240098245 EW=  -2600.870178611601 PC=     -0.000000000000 EN=     -0.000000000000
+ F_CNTN     = ./continue.data , newly opened  
+ !ion cps and pos at the end of this job
+ !ion    1    1.57991708    1.57991708    1.57991708   0.0625000   0.0625000   0.0625000
+ !ion    2    1.57991708    7.89958539    7.89958539   0.0625000   0.3125000   0.3125000
+ !ion    3   11.05944430    4.74114805    4.74114774   0.4375010   0.1875553   0.1875552
+ !ion    4    7.89958539    1.57991708    7.89958539   0.3125000   0.0625000   0.3125000
+ !ion    5    4.74114770   11.05944473    4.74114763   0.1875552   0.4375010   0.1875552
+ !ion    6    7.89958539    7.89958539    1.57991708   0.3125000   0.3125000   0.0625000
+ !ion    7    4.74114754    4.74114745   11.05944500   0.1875552   0.1875552   0.4375010
+ !ion    8    1.57991708    1.57991708   14.21925370   0.0625000   0.0625000   0.5625000
+ !ion    9   11.05941955   11.05941955   23.69875617   0.4375000   0.4375000   0.9375000
+ !ion   10    1.57991708    7.89958539   20.53892202   0.0625000   0.3125000   0.8125000
+ !ion   11   11.05939447    4.74114785   17.37769172   0.4374990   0.1875552   0.6874448
+ !ion   12    7.89958539    1.57991708   20.53892202   0.3125000   0.0625000   0.8125000
+ !ion   13    4.74114779   11.05939453   17.37769111   0.1875552   0.4374990   0.6874447
+ !ion   14    7.90587974    7.90588092   14.21295871   0.3127490   0.3127490   0.5622510
+ !ion   15    4.73975123    4.73975123   23.69875617   0.1875000   0.1875000   0.9375000
+ !ion   16    1.57991708   14.21925370    1.57991708   0.0625000   0.5625000   0.0625000
+ !ion   17   11.05941955   23.69875617   11.05941955   0.4375000   0.9375000   0.4375000
+ !ion   18    1.57991708   20.53892202    7.89958539   0.0625000   0.8125000   0.3125000
+ !ion   19   11.05939477   17.37769117    4.74114784   0.4374990   0.6874447   0.1875552
+ !ion   20    7.90588195   14.21295744    7.90588162   0.3127491   0.5622509   0.3127491
+ !ion   21    4.73975123   23.69875617    4.73975123   0.1875000   0.9375000   0.1875000
+ !ion   22    7.89958539   20.53892202    1.57991708   0.3125000   0.8125000   0.0625000
+ !ion   23    4.74114779   17.37769118   11.05939489   0.1875552   0.6874447   0.4374990
+ !ion   24    1.57991708   14.21925370   14.21925370   0.0625000   0.5625000   0.5625000
+ !ion   25   11.05941955   23.69875617   23.69875617   0.4375000   0.9375000   0.9375000
+ !ion   26    1.57991708   20.53892202   20.53892202   0.0625000   0.8125000   0.8125000
+ !ion   27   11.05944488   17.37769147   17.37769130   0.4375010   0.6874448   0.6874448
+ !ion   28    7.89958539   14.21925370   20.53892202   0.3125000   0.5625000   0.8125000
+ !ion   29    4.73975123   23.69875617   17.37908786   0.1875000   0.9375000   0.6875000
+ !ion   30    7.89958539   20.53892202   14.21925370   0.3125000   0.8125000   0.5625000
+ !ion   31    4.73975123   17.37908786   23.69875617   0.1875000   0.6875000   0.9375000
+ !ion   32   14.21925370    1.57991708    1.57991708   0.5625000   0.0625000   0.0625000
+ !ion   33   23.69875617   11.05941955   11.05941955   0.9375000   0.4375000   0.4375000
+ !ion   34   14.21295841    7.90588091    7.90588073   0.5622510   0.3127490   0.3127490
+ !ion   35   23.69875617    4.73975123    4.73975123   0.9375000   0.1875000   0.1875000
+ !ion   36   20.53892202    1.57991708    7.89958539   0.8125000   0.0625000   0.3125000
+ !ion   37   17.37769150   11.05939467    4.74114795   0.6874448   0.4374990   0.1875553
+ !ion   38   20.53892202    7.89958539    1.57991708   0.8125000   0.3125000   0.0625000
+ !ion   39   17.37769123    4.74114789   11.05939474   0.6874448   0.1875553   0.4374990
+ !ion   40   14.21925370    1.57991708   14.21925370   0.5625000   0.0625000   0.5625000
+ !ion   41   23.69875617   11.05941955   23.69875617   0.9375000   0.4375000   0.9375000
+ !ion   42   14.21925370    7.89958539   20.53892202   0.5625000   0.3125000   0.8125000
+ !ion   43   23.69875617    4.73975123   17.37908786   0.9375000   0.1875000   0.6875000
+ !ion   44   20.53892202    1.57991708   20.53892202   0.8125000   0.0625000   0.8125000
+ !ion   45   17.37769133   11.05944463   17.37769130   0.6874448   0.4375010   0.6874448
+ !ion   46   20.53892202    7.89958539   14.21925370   0.8125000   0.3125000   0.5625000
+ !ion   47   17.37908786    4.73975123   23.69875617   0.6875000   0.1875000   0.9375000
+ !ion   48   14.21925370   14.21925370    1.57991708   0.5625000   0.5625000   0.0625000
+ !ion   49   23.69875617   23.69875617   11.05941955   0.9375000   0.9375000   0.4375000
+ !ion   50   14.21925370   20.53892202    7.89958539   0.5625000   0.8125000   0.3125000
+ !ion   51   23.69875617   17.37908786    4.73975123   0.9375000   0.6875000   0.1875000
+ !ion   52   20.53892202   14.21925370    7.89958539   0.8125000   0.5625000   0.3125000
+ !ion   53   17.37908786   23.69875617    4.73975123   0.6875000   0.9375000   0.1875000
+ !ion   54   20.53892202   20.53892202    1.57991708   0.8125000   0.8125000   0.0625000
+ !ion   55   17.37769126   17.37769133   11.05944481   0.6874448   0.6874448   0.4375010
+ !ion   56   14.21295842   14.21295841   14.21295758   0.5622510   0.5622510   0.5622509
+ !ion   57   23.69875617   23.69875617   23.69875617   0.9375000   0.9375000   0.9375000
+ !ion   58   14.21925370   20.53892202   20.53892202   0.5625000   0.8125000   0.8125000
+ !ion   59   23.69875617   17.37908786   17.37908786   0.9375000   0.6875000   0.6875000
+ !ion   60   20.53892202   14.21925370   20.53892202   0.8125000   0.5625000   0.8125000
+ !ion   61   17.37859457   23.69734719   17.37859457   0.6874805   0.9374443   0.6874805
+ !ion   62   20.54024275   20.54024235   14.22136106   0.8125522   0.8125522   0.5625834
+ !ion   63   17.37859483   17.37859480   23.69734717   0.6874805   0.6874805   0.9374443
+ hconst_min,lzero_max =      441     442
+ **** Eigen Values and Occupations ****
+ ** iteration_ionic =        2, iteration_electronic =        1 **
+ EFermi =      -0.06649223
+ ======  Energy Eigen Values in the vicinity of the Fermi energy level (Range=    439 :    444) =====
+ ik =    1     -0.075043   -0.074534   -0.074531   -0.062177   -0.054550   -0.054548
+ ik =    2     -0.075051   -0.074532   -0.074522   -0.062173   -0.054551   -0.054543
+ ik =    3     -0.075052   -0.074532   -0.074525   -0.062172   -0.054549   -0.054540
+ ik =    4     -0.075053   -0.074530   -0.074525   -0.062170   -0.054549   -0.054540
+ ======  Occupations in the vicinity of the Fermi energy level (Range=    439 :    444) =====
+ ik =    1      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ ik =    2      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ ik =    3      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ ik =    4      1.000000    1.000000    1.000000    0.000000    0.000000    0.000000
+ F_ENERG    = ./nfenergy.data , newly opened  
+ F_CNTN_BIN = ./continue_bin.data , newly opened  
+ F_ZAJ      = ./nfzaj.data , newly opened  
+ F_CHGT     = ./nfchgt.data , newly opened  
+  !D Writing zaj 
+ F_FERMI    = ./nfefermi.data , newly opened  
+ <<Total CPU TIME (elapsed time) =     94039.69400 (sec.)>>
+ n_sub_names =    29 num_subroutines_statistics =    16
+ << cpu time statistics >>
+  no  id           subroutine name           time(sec)   count   no(2)
+    1   17         decide_correction_vector  6341.72400      12       1
+    2   19       m_ES_orthogonal_phi_to_WFs  5340.92900      12       2
+    3   15                 m_ES_Vnonlocal_W  2758.71800      16       3
+    4   16           evolve_WFs_in_subspace  1352.37300       4       4
+    5   11                    betar_dot_Psi   949.91000      20       5
+    6   13             m_ES_WF_in_Rspace(1)   579.51400    4320       6
+    7   10            modified_gram_schmidt   564.32200       4       7
+    8   20                 prepare_Hloc_phi   519.53800      12       8
+    9   22                    m_CD_softpart   447.74900       1       9
+   10   23                    m_CD_hardpart   372.29500       1      10
+   11   14           m_ES_sort_eigen_values   175.12100       1      11
+   12   21          evolve_WFs_in_subspace    132.57000     168      12
+   13    8               m_XC_cal_potential    95.83400       1      13
+   14   29                     m_CD_wd_chgq    57.52100       1      14
+   15   24           m_CD_convergence_check    21.92700       1      15
+   16   25                   m_CD_mix_pulay     0.28900       1      16
+ <<Total elapsed CPU Time until now = 94039.72700 (sec.)>>
+  closed filenumber =           31
+  closed filenumber =           52
+  closed filenumber =           53
+  closed filenumber =           55
+  closed filenumber =           42
+  closed filenumber =           43
+  closed filenumber =           44
+  closed filenumber =           75
