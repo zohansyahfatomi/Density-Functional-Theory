@@ -1,0 +1,105 @@
+5Control{
+    cpumax = 23 hour
+    condition = -1 
+    max_iteration = 1000000 
+}
+accuracy{
+    cutoff_wf = 25.00 rydberg
+    cutoff_cd = 225.00 rydberg
+    ksampling{
+        method = monk 
+        mesh{
+            nx = 4
+            ny = 4
+            nz = 4
+        }
+    }
+!    smearing{
+!        method = tetrahedral 
+!       width = 0.001 hartree
+!   }
+    xctype = ggapbe 
+    ! scf_convergence{
+    !    delta_total_energy = 1.e-12 hartree
+    !    succession = 3 
+    ! }
+    force_convergence{
+        max_force = 0.1e-3 
+    }
+    ! initial_wavefunctions = matrix_diagon 
+    matrix_diagon{
+        cutoff_wf = 30.00 rydberg  ! 3.0 rydberg
+    }
+	initial_charge_density = Gauss
+    num_bands = 192 
+}
+structure{
+    unit_cell{
+        a_vector = 12.6393366266 0.00 0.00 
+        b_vector = 0.00 12.6393366266 0.00 
+        c_vector = 0.00 0.00 12.6393366266 
+    }
+    atom_list{
+        coordinate_system = internal 
+        atoms{
+            #default weight = 1, mobile = 1
+            #tag element rx ry rz mobile weight
+             Sn 0.125 0.125 0.125 1 
+             Sn -0.125 -0.125 -0.125 1 
+             Sn 0.125 0.625 0.625 1 
+             Sn -0.125 -0.625 -0.625 1 
+             Sn 0.625 0.125 0.625 1 
+             Sn -0.625 -0.125 -0.625 1 
+             Sn 0.625 0.625 0.125 1 
+             Sn -0.625 -0.625 -0.125 1 
+			 }
+    }
+    element_list{
+        #tag element atomicnumber mass zeta deviation
+         Sn 50 * * *
+    }
+!    symmetry{
+!        tspace{
+!            lattice_system = primitive 
+!        }
+!    }
+!    unit_cell_type = bravais 
+ }
+! wavefunction_solver{
+!    solvers{
+!        #tag sol till_n dts dte itr var prec cmix submat
+!         lm+MSD 10 0.2 * * * on 1 on
+!         RMM2P -1 1.0 * * * on 1 on
+!    }
+! }
+! charge_mixing{
+!    mixing_methods{
+!        #tag no method rmxs rmxe itr var prec
+!         1 simple 0.90 0.95 40 linear on
+!    }
+! }
+! Postprocessing{
+!    dos{
+!        method = tetrahedral 
+!        sw_dos = ON 
+!        deltaE_dos = 1.e-4 hartree
+!        deviation_Gaussian = 1.e-5 
+!        nwd_dos_window_width = 10 
+!    }
+    charge{
+        sw_charge_rspace = ON 
+        filetype = cube 
+        title = "This is a title line for the bulk Si" 
+    }
+! }
+! printoutlevel{
+!    base = 1 
+! }
+structural_evolution{
+	method = gdiis
+	dt = 50
+	gdiis{
+		initial_method = cg
+		c_forc2gdiis = 0.001 hartree/bohr
+	}
+}
