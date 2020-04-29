@@ -1,4 +1,3 @@
-# Density-Functional-Theory
-#This code is my input file on density functional theory project 
-this code is for my research about "Efek Vibrasi Atomik pada Konsentrasi Vacancy α-Sn
-(Grey Tin): Komputasi Berbasis Density Functional Theory" ()
+## Density-Functional-Theory
+This code is the input file of density functional theory (DFT) project.
+This code is for my research about "Vibrational Effect on Vacancy Concentration of Gray Tin"
